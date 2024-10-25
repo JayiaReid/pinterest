@@ -11,14 +11,13 @@ import Pin from '../(routes)/pins/_components/Pin'
 const Home_user = () => {
 
   const sections = [
-    { name: "Art" },
-    { name: "Aesthetic pictures" },
-    { name: "Anime" },
-    { name: "Sneakers" },
-    { name: "Art" },
-    { name: "Aesthetic pictures" },
-    { name: "Anime" },
-    { name: "Sneakers" },
+    { name: "Art", image: "/a10.jpg"},
+    { name: "Aesthetic pictures", image: "/a26.jpg" },
+    { name: "Anime", image: "/a12.jpg" },
+    { name: "Vision Board", image: "/a3.jpg" },
+    { name: "Hobbies",image: "/a17.jpg" },
+    { name: "Random", image: "/a4.jpg" },
+    { name: "Bible", image: "/a21.jpg" },
     // would be based on public boards
   ]
 
@@ -36,25 +35,6 @@ const Home_user = () => {
     return colors[Math.floor(Math.random() * colors.length)];
   };
 
-  const images = [
-    { url: "/a0.jpg" },
-    { url: "/a1.jpg" },
-    { url: "/a2.jpg" },
-    { url: "/a3.jpg" },
-    { url: "/a4.jpg" },
-    { url: "/a5.jpg" },
-    { url: "/a6.jpg" },
-    { url: "/a7.jpg" },
-    { url: "/a0.jpg" },
-    { url: "/a1.jpg" },
-    { url: "/a2.jpg" },
-    { url: "/a3.jpg" },
-    { url: "/a4.jpg" },
-    { url: "/a5.jpg" },
-    { url: "/a6.jpg" },
-    { url: "/a7.jpg" },
-  ]
-
   const pins = [
     { image: "/a0.jpg", user: "user_2nJ9SYAXcPeU6OghO7vvBRTg4Li" },
     { image: "/a1.jpg", user: "user_2nJ9SYAXcPeU6OghO7vvBRTg4Li" },
@@ -64,15 +44,27 @@ const Home_user = () => {
     { image: "/a5.jpg", user: "user_2nJ9SYAXcPeU6OghO7vvBRTg4Li" },
     { image: "/a6.jpg", user: "user_2nJ9SYAXcPeU6OghO7vvBRTg4Li" },
     { image: "/a7.jpg", user: "user_2nJ9SYAXcPeU6OghO7vvBRTg4Li" },
-    { image: "/a0.jpg", user: "user_2nJ9SYAXcPeU6OghO7vvBRTg4Li" },
-    { image: "/a1.jpg", user: "user_2nJ9SYAXcPeU6OghO7vvBRTg4Li" },
-    { image: "/a2.jpg", user: "user_2nJ9SYAXcPeU6OghO7vvBRTg4Li" },
-    { image: "/a3.jpg", user: "user_2nJ9SYAXcPeU6OghO7vvBRTg4Li" },
-    { image: "/a4.jpg", user: "user_2nJ9SYAXcPeU6OghO7vvBRTg4Li" },
-    { image: "/a5.jpg", user: "user_2nJ9SYAXcPeU6OghO7vvBRTg4Li" },
-    { image: "/a6.jpg", user: "user_2nJ9SYAXcPeU6OghO7vvBRTg4Li" },
-    { image: "/a7.jpg", user: "user_2nJ9SYAXcPeU6OghO7vvBRTg4Li" },
     { image: "/a8.jpg", user: "user_2nJ9SYAXcPeU6OghO7vvBRTg4Li" },
+    { image: "/a9.jpg", user: "user_2nJ9SYAXcPeU6OghO7vvBRTg4Li" },
+    { image: "/a10.jpg", user: "user_2nJ9SYAXcPeU6OghO7vvBRTg4Li" },
+    { image: "/a11.jpg", user: "user_2nJ9SYAXcPeU6OghO7vvBRTg4Li" },
+    { image: "/a12.jpg", user: "user_2nJ9SYAXcPeU6OghO7vvBRTg4Li" },
+    { image: "/a13.jpg", user: "user_2nJ9SYAXcPeU6OghO7vvBRTg4Li" },
+    { image: "/a14.jpg", user: "user_2nJ9SYAXcPeU6OghO7vvBRTg4Li" },
+    { image: "/a15.jpg", user: "user_2nJ9SYAXcPeU6OghO7vvBRTg4Li" },
+    { image: "/a16.jpg", user: "user_2nJ9SYAXcPeU6OghO7vvBRTg4Li" },
+    { image: "/a17.jpg", user: "user_2nJ9SYAXcPeU6OghO7vvBRTg4Li" },
+    { image: "/a18.jpg", user: "user_2nJ9SYAXcPeU6OghO7vvBRTg4Li" },
+    { image: "/a19.jpg", user: "user_2nJ9SYAXcPeU6OghO7vvBRTg4Li" },
+    { image: "/a20.jpg", user: "user_2nJ9SYAXcPeU6OghO7vvBRTg4Li" },
+    { image: "/a21.jpg", user: "user_2nJ9SYAXcPeU6OghO7vvBRTg4Li" },
+    { image: "/a22.jpg", user: "user_2nJ9SYAXcPeU6OghO7vvBRTg4Li" },
+    { image: "/a23.jpg", user: "user_2nJ9SYAXcPeU6OghO7vvBRTg4Li" },
+    { image: "/a24.jpg", user: "user_2nJ9SYAXcPeU6OghO7vvBRTg4Li" },
+    { image: "/a25.jpg", user: "user_2nJ9SYAXcPeU6OghO7vvBRTg4Li" },
+    { image: "/a26.jpg", user: "user_2nJ9SYAXcPeU6OghO7vvBRTg4Li" },
+    { image: "/a27.jpg", user: "user_2nJ9SYAXcPeU6OghO7vvBRTg4Li" },
+    { image: "/a28.jpg", user: "user_2nJ9SYAXcPeU6OghO7vvBRTg4Li" },
   ]
 
 
@@ -87,7 +79,7 @@ const Home_user = () => {
               <Card className="border-none shadow-none bg-muted" style={{ backgroundColor: getRandomColor() }}>
                 <CardContent className="h-[100px] flex gap-5 p-5 items-center justify-start">
                   <div className="object-cover border-white border-2 rounded-xl">
-                    <Image className="rounded-xl h-[70px] w-[70px] object-cover " src={`/a${index}.jpg`} width={50} height={50} />
+                    <Image className="rounded-xl h-[70px] w-[70px] object-cover " src={section.image} width={50} height={50} />
                   </div>
                   <div className="flex flex-col ">
                     <h2 className="font-light text-md">More ideas for</h2>
