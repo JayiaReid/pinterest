@@ -6,12 +6,11 @@ import Head from './home_comps/user_head'
 import Root_head from './root_comps/root_head'
 
 const Nav = () => {
-    // const {isSignedIn} = useUser()
+    const {isSignedIn} = useUser()
 
   return (
     <div>
-        {/* {isSignedIn? <Head /> : <Root_head/>} */}
-        <Head/>
+        {isSignedIn? <Head /> : <Root_head/>}
     </div>
   )
 }
