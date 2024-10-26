@@ -7,7 +7,7 @@ import Root_Home from "./_components/root";
 import { LoaderCircleIcon } from "lucide-react";
 
 export default function Home() {
-  // const {isSignedIn, isLoaded}=useUser()
+  const {isLoaded}=useUser()
 
   if (!isLoaded) return <div className="flex items-center justify-center absolute h-screen bg-white w-screen top-0 left-0">
     <div className='loader'></div>
