@@ -4,12 +4,13 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { useUser } from '@clerk/nextjs'
-import { ChevronDown, ChevronUp, HeartIcon, LoaderCircleIcon, MoreHorizontal, Share, Check, ArrowLeft } from 'lucide-react'
+import { ChevronDown, ChevronUp, HeartIcon, LoaderCircleIcon, MoreHorizontal, Share, Check, ArrowLeft, Download } from 'lucide-react'
 import Image from 'next/image'
 import Link from 'next/link'
 import { useParams, useRouter } from 'next/navigation'
 import React from 'react'
 import Pin from '../_components/Pin'
+import Pin_map from '@/app/_components/global_comps/pin_map'
 
 const Page = () => {
 
@@ -17,6 +18,7 @@ const Page = () => {
 
   const router = useRouter()
   const [showComments, setShowComments] = React.useState(false)
+  // const [liked, setLiked] = React.useState(false)
   const [comment, setComment] = React.useState({
     user_id: "user_2nJ9SYAXcPeU6OghO7vvBRTg4Li",
     user: "Ola Ziolek",
@@ -25,13 +27,13 @@ const Page = () => {
   const [pin, setPin] = React.useState({
     image: `/a${id}.jpg`,
     likes: 12,
+    liked: false,
     title: "Dinner Date Aesthetic",
     description: "Dinner Date Aesthetic",
     user_id: "user_2nJ9SYAXcPeU6OghO7vvBRTg4Li",
     comments: [
       { id: 1, user: "Emma", content: "Beautiful <3" }
-    ]
-  })
+    ]})
 
   const user = {
     Full_Name: "Ola Ziolek",
@@ -40,6 +42,13 @@ const Page = () => {
   }
 
   const { isLoaded } = useUser()
+
+  // have an update pin function that updates the pin in database when a change occurs
+
+  const likePin = ()=>{
+    setPin(pin => ({ ...pin, liked: !pin.liked }))
+    // update in db
+  }
 
   const addComment = () => {
     if (comment.content.trim() === "") return
@@ -58,6 +67,8 @@ const Page = () => {
     }))
 
     setComment({ ...comment, content: "" })
+
+    // update in db
   }
 
   const pins = [
@@ -87,11 +98,11 @@ const Page = () => {
               <div className='flex items-center justify-between'>
                 <div className='flex gap-5'>
                   <div className='flex gap-2'>
-                    <HeartIcon className='cursor-pointer' strokeWidth={3} size={20} />
+                    <HeartIcon className='cursor-pointer' onClick={() => likePin()}strokeWidth={`${pin.liked? 0 : 3}`} size={20} fill={`${pin.liked? 'red' : 'transparent'}`}/>
                     <h2>{pin.likes}</h2>
                   </div>
                   <Share strokeWidth={3} size={20} />
-                  <MoreHorizontal strokeWidth={3} size={20} />
+                  <Download strokeWidth={3} size={20}/>
                 </div>
                 <Button size={30} className="bg-primary text-white self-end text-lg px-4 py-2 rounded-3xl shadow-none">Save</Button>
               </div>
@@ -150,7 +161,7 @@ const Page = () => {
                   placeholder="Add a comment"
                   className="w-full border-2 p-5 text-lg bg-transparent rounded-full focus:outline-none focus:ring-2 focus:ring-[#767676]"
                 />
-               <Button variant="ouline" className="rounded-full p-1 border h-[30px]"><Check onClick={()=>addComment()} className='cursor-pointer' strokeWidth={2} size={20} /></Button> 
+               <Button variant="ouline" className="rounded-full p-1 border h-[30px]"><Check onClick={()=>{addComment(); setShowComments(true)}} className='cursor-pointer' strokeWidth={2} size={20} /></Button> 
               </div>
             </div>
           </CardContent>
@@ -158,17 +169,9 @@ const Page = () => {
       </div>
       <div>
         <h2 className='text-center font-bold text-xl'>More to explore</h2>
-        <div className="columns-[300px] sm:columns-[250px] xs:[175px] h-auto mt-5 p-10">
-        {pins.map((pin, index) => (
-          <div className="m-5">
-            <Pin className="rounded-2xl" pin={pin} id={index} />
-            {/* <h2>Info</h2> */}
-          </div>
-
-        ))}
-
+        <Pin_map pins={pins}/>
       </div>
-      </div>
+
     </div>
   )
 }

@@ -2,6 +2,7 @@
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Button } from '@/components/ui/button'
 import { useUser } from '@clerk/nextjs'
+import { DotIcon } from 'lucide-react'
 import Image from 'next/image'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
@@ -42,7 +43,7 @@ const Profile_section = ({ state }) => {
                     <Image src={'/pin_code.png'} height={15} width={15} />
                     <h2 className="text-sm text-[#767676d6]">{userInfo.username}</h2>
                 </div>
-                <h2 className="font-bold text-forground">{userInfo.followers} followers . {userInfo.following} following</h2>
+                <h2 className="font-bold text-forground flex">{userInfo.followers} followers <DotIcon/> {userInfo.following} following</h2>
                 <div className="flex gap-2">
                     <Button onClick={() =>  router.push(`/`)} variant="muted" size={30} className="bg-muted text-lg text-foreground p-3 rounded-3xl shadow-none">Share</Button>
                     <Button onClick={() =>  router.push(`/settings/profile`)} variant="muted" size={30} className=" bg-muted text-lg text-foreground p-3 rounded-3xl shadow-none">Edit Profile</Button>

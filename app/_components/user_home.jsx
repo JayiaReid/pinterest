@@ -1,3 +1,4 @@
+"use client"
 import React from 'react'
 // import Head from './home_comps/user_head'
 import PinterestHeader from './home_comps/user_head'
@@ -6,18 +7,21 @@ import { Card, CardContent } from '@/components/ui/card'
 import Image from 'next/image'
 import Create from '../(routes)/user/[username]/created/_components/Create'
 import Pin from '../(routes)/pins/_components/Pin'
+import Link from 'next/link'
+import { useUser } from '@clerk/nextjs'
 
 
 const Home_user = () => {
+  const {user} = useUser()
 
   const sections = [
-    { name: "Art", image: "/a10.jpg"},
-    { name: "Aesthetic pictures", image: "/a26.jpg" },
-    { name: "Anime", image: "/a12.jpg" },
-    { name: "Vision Board", image: "/a3.jpg" },
-    { name: "Hobbies",image: "/a17.jpg" },
-    { name: "Random", image: "/a4.jpg" },
-    { name: "Bible", image: "/a21.jpg" },
+    { board_id: 1, name: "Art", image: "/a10.jpg"},
+    { board_id: 1, name: "Aesthetic pictures", image: "/a26.jpg" },
+    { board_id: 1, name: "Anime", image: "/a12.jpg" },
+    { board_id: 1, name: "Vision Board", image: "/a3.jpg" },
+    { board_id: 1, name: "Hobbies",image: "/a17.jpg" },
+    { board_id: 1, name: "Random", image: "/a4.jpg" },
+    { board_id: 1, name: "Bible", image: "/a21.jpg" },
     // would be based on public boards
   ]
 
@@ -69,7 +73,7 @@ const Home_user = () => {
 
 
   return (
-    <div>
+    <div className='bg-background'>
       {/* <PinterestHeader /> */}
 
       <Carousel opts={{ align: "start" }} className="mx-20 mt-5 p-5 max-w-[90%]">
@@ -78,8 +82,8 @@ const Home_user = () => {
             <CarouselItem key={index} className="basis-1/2">
               <Card className="border-none shadow-none bg-muted" style={{ backgroundColor: getRandomColor() }}>
                 <CardContent className="h-[100px] flex gap-5 p-5 items-center justify-start">
-                  <div className="object-cover border-white border-2 rounded-xl">
-                    <Image className="rounded-xl h-[70px] w-[70px] object-cover " src={section.image} width={50} height={50} />
+                  <div className="object-cover hover:border-transparent cursor-pointer border-white border-2 rounded-xl">
+                    <Link href={{pathname: `user/${user?.id}/${section.name}/more_ideas`, query: {board_id: section.board_id}}}><Image className="rounded-xl h-[70px] w-[70px] object-cover " src={section.image} width={50} height={50} /></Link>
                   </div>
                   <div className="flex flex-col ">
                     <h2 className="font-light text-md">More ideas for</h2>
@@ -95,7 +99,7 @@ const Home_user = () => {
         <CarouselNext className="shadow-none border-none text-gray-700 text-xl cursor-pointer" />
       </Carousel>
 
-      <div className="columns-[240px] gap-4 p-4 ">
+      <div className="columns-[240px] gap-4 p-4 pb-20">
         {pins.map((pin, index) => (
           <div className="p-5">
             <Pin key={index} className="rounded-2xl" pin={pin} id={index} />

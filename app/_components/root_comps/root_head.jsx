@@ -1,11 +1,20 @@
+"use client"
 import { Button } from '@/components/ui/button'
+import { useUser } from '@clerk/nextjs'
 import Image from 'next/image'
 import Link from 'next/link'
+import { usePathname } from 'next/navigation'
 import React from 'react'
 
 const Root_head = () => {
+
+  const pathname = usePathname()
+  const {isLoaded} = useUser()
+  
+  if(pathname == '/sign-in' || pathname == '/sign-up' || !isLoaded) return <div></div>
+
   return (
-    <div className='mt-5 p-5 w-screen bg-transparent h-[56px] gap-5 flex items-center justify-between'>
+    <div className='absolute mt-5 p-5 w-screen bg-transparent h-[56px] gap-5 flex items-center justify-between z-10'>
        <Link href={'/'}>
     <div className="bg-transparent p-3 rounded-full duration-300 cursor-pointer">
       <div className="  flex items-center gap-2 justify-center">

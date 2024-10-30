@@ -9,6 +9,7 @@ import { useUser } from '@clerk/nextjs'
 import { Edit2, LoaderCircleIcon, MoreHorizontal, SlidersHorizontalIcon, Sparkles, SquareStack } from 'lucide-react'
 import { useParams } from 'next/navigation'
 import React from 'react'
+import Edit from '../_components/Edit'
 
 const page = () => {
   const [edit, setEdit] = React.useState(false)
@@ -40,18 +41,7 @@ const page = () => {
         <h2 className="text-2xl font-semibold text-muted-foreground">{section.board}</h2>
         <div className='flex gap-2 items-center'>
           <h2 className="text-4xl font-semibold text-foreground">{section.title}</h2>
-        {/* <DropdownMenu>
-          <DropdownMenuTrigger ><MoreHorizontal size={30} strokeWidth={2.5} onClick={() => setEdit(!edit)} className={`${edit ? "bg-foreground text-background" : "bg-muted text-foreground"} rounded-full p-2`} /></DropdownMenuTrigger>
-          <DropdownMenuContent className="rounded-2xl p-2">
-            <DropdownMenuLabel>
-              <h2 className='text-xs font-light'>section options</h2>
-            </DropdownMenuLabel>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem className="rounded-lg p-2">
-            <h2 className='font-medium text-medium'>Edit Section</h2>
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu> */}
+        <Edit board={section} type="section"/>
         </div>
         
 

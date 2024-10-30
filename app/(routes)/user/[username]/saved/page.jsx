@@ -3,12 +3,15 @@ import React from 'react'
 import Profile_section from '../../_components/profile_section'
 import Nopins from '../../_components/no_pin'
 import { useUser } from '@clerk/nextjs'
-import { LoaderCircleIcon, SlidersHorizontalIcon } from 'lucide-react'
+import { Check, LoaderCircleIcon, SlidersHorizontalIcon } from 'lucide-react'
 import Board from '../[board]/_components/Board'
 import Create from '../[board]/_components/CreateBoard'
 import { Button } from '@/components/ui/button'
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
 
 const page = () => {
+  const [active, setActive]=React.useState(false)
+  const [sorted, setSorted]=React.useState(false)
 
   const boards = [
     { user: "user_2nJ9SYAXcPeU6OghO7vvBRTg4Li", public: false, cover: '/a4.jpg', images: [{ url: '/a8.jpg' }, { url: '/a5.jpg' }], title: "Travel Ideas", image: "/board1.jpg", pins: 25 },
@@ -35,7 +38,27 @@ const page = () => {
       {/* filter system */}
       {/* board create */}
       <div className='flex px-5 justify-between '>
-        <Button variant="muted" className=" rounded-full h-[60px] w-[60px] font-bold"><SlidersHorizontalIcon size={30} strokeWidth={2.5} /></Button>
+      <DropdownMenu onOpenChange={(isOpen) => !isOpen && setActive(false)}>
+        <DropdownMenuTrigger onClick={()=>setActive(true)}>
+          <Button variant="muted" className=" rounded-full h-[60px] w-[60px] font-bold"><SlidersHorizontalIcon size={30} strokeWidth={2.5} /></Button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent className="rounded-2xl m-5 p-2">
+            <DropdownMenuLabel>
+              <h2 className='text-xs font-light'>Board options</h2>
+            </DropdownMenuLabel>
+            {/* <DropdownMenuSeparator /> */}
+            <DropdownMenuItem onClick={()=>setSorted(true)} className="rounded-xl flex justify-between p-2 w-56">
+              <h2 className='font-semibold text-lg'>Sort A to Z</h2>
+              {sorted && <Check size={20} strokeWidth={2.75}/>}
+            </DropdownMenuItem>
+            <DropdownMenuItem onClick={()=>setSorted(false)} className="rounded-xl flex justify-between p-2 w-56">
+              <h2 className='font-semibold text-lg'>Custom</h2>
+              {!sorted && <Check size={20} strokeWidth={2.75}/>}
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        
+      </DropdownMenu>
+        
         <Create />
       </div>
       <div className=' grid grid-cols-2 xl:grid-cols-5 lg:grid-cols-4 md:grid-cols-3 sm:grid-cols-2'>

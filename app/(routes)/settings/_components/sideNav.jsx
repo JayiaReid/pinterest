@@ -10,11 +10,11 @@ const sideNav = ({page}) => {
   return (
     <div className='flex flex-col p-5 gap-5'>
         <div >
-            <Button onClick={() =>  router.push(`/settings/profile`)} variant="muted" className={`${page == 'profile'? " border-b-4 border-b-black" : "hover:bg-muted hover:rounded-xl cursor-pointer"}  text-lg duration-300 px-0  py-2`}>Edit profile</Button>
+            <Button onClick={() =>  router.push(`/settings/profile`)} variant="muted" className={`${page == 'profile'? " border-b-4 rounded-none border-b-black" : "hover:bg-muted hover:rounded-xl cursor-pointer"}  text-lg duration-300 px-2  py-2 font-semibold `}>Edit profile</Button>
         </div>
-        <div >
-            <Button onClick={() =>  router.push(`/settings/account-settings`)} variant="muted" className={`${page == 'account'? " border-b-4 border-b-black" : "hover:bg-muted hover:rounded-xl cursor-pointer"}  text-lg duration-300 px-0  py-2`}>Account Management</Button>
-        </div>
+        {/* <div >
+            <Button onClick={() =>  router.push(`/settings/account-settings`)} variant="muted" className={`${page == 'account'? " border-b-4 rounded-none border-b-black" : "hover:bg-muted hover:rounded-xl cursor-pointer"}  text-lg duration-300 px-2  py-2 font-semibold`}>Account Management</Button>
+        </div> */}
     </div>
   )
 }

@@ -3,7 +3,7 @@ import Image from "next/image";
 import { useUser } from "@clerk/nextjs";
 import Nav from "./_components/header";
 import Home_user from "./_components/user_home";
-import Root_Home from "./_components/root";
+import Root_Home from "./_components/root_home";
 import { LoaderCircleIcon } from "lucide-react";
 
 export default function Home() {
@@ -13,8 +13,9 @@ export default function Home() {
     <div className='loader'></div>
   </div>
 
+// note: code is a bit messy because of dummy data but all will be organized once i have implemented backend
   return (
-    <div className="h-screen bg-background">
+    <div className="h-screen">
       {isSignedIn? <Home_user/> : <Root_Home/> }
     </div>
   );

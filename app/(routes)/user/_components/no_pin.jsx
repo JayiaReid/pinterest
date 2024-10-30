@@ -12,9 +12,9 @@ const Nopins = ({ state }) => {
     )
 
     return (
-        <div className="mt-5 flex items-center justify-center flex-col gap-5">
+        <div className="mt-5 p-5 flex items-center justify-center flex-col gap-5">
             <h2 >Nothing to show...yet! Pins you create will live here.</h2>
-            <Link size={30} href={'/pin-creation-tool'}><Button className="rounded-3xl p-3">Create Pin</Button></Link>
+            {/* <Link size={30} href={'/pin-creation-tool'}><Button className="rounded-3xl p-3">Create Pin</Button></Link> */}
         </div>
     )
 }

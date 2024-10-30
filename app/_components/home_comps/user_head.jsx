@@ -4,28 +4,46 @@ import React from 'react'
 import Link from 'next/link'
 import { DropdownMenu, DropdownMenuCheckboxItem, DropdownMenuContent, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
 import { ChevronDown, Search } from 'lucide-react'
-import { useRouter } from 'next/navigation'
+import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { useUser } from '@clerk/nextjs'
 import Create from '@/app/(routes)/user/[username]/created/_components/Create'
 
 
 const Head = () => {
-  const [state, setState] = React.useState('')
+  const [search, setSearch] = React.useState('')
+  const pathname = usePathname()
+  const searchParams = useSearchParams()
+
+  React.useEffect(() => {
+    if (pathname == '/search') {
+      setSearch(searchParams.get('q'))
+    }else{
+      setSearch('')
+    }
+  }, [pathname])
+
 
   const router = useRouter()
   // for now user.name
   const { user } = useUser()
   const username = user.id
 
-  React.useEffect(()=>{
+  React.useEffect(() => {
     // console.log(router.pathname)
-  },[])
+  }, [])
 
-  const sections = [
-    { name: "Home", link: "/" },
-    { name: "Create", link: "/pin-creation-tool" },
-  ]
+  const handleSearchEnter = (e) => {
+    if (e.key === 'Enter' && search) {
+      router.push(`/search?q=${encodeURIComponent(search)}`)
+    }
+  }
+
+  const handleSearchClick = () => {
+    if (search) {
+      router.push(`/search?q=${encodeURIComponent(search)}`)
+    }
+  }
 
   return (
     <div className='mt-5 p-5 w-screen bg-background h-[56px] gap-5 flex items-center'>
@@ -51,8 +69,11 @@ const Head = () => {
       {/* <h2 className={`${state == "Home" ? "bg-muted" : "bg-transparent"} rounded-lg font-bold`} checked={state == "Home"} onClick={() => router.push(item.link)}>Home</h2> */}
 
       <div className='flex items-center w-[80%] relative'>
-        <Search size={20} strokeWidth={3} className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-500" />
+        <Search size={20} onClick={() => handleSearchClick()} strokeWidth={3} className="absolute left-4 top-1/2 cursor-pointer transform -translate-y-1/2 text-gray-500" />
         <input
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          onKeyDown={(e) => handleSearchEnter(e)}
           type='text'
           placeholder="Search"
           className='w-full pl-12 pr-4 py-3 bg-muted rounded-full focus:outline-none focus:ring-2 focus:ring-[#767676]'
