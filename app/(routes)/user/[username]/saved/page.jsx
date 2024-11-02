@@ -1,5 +1,5 @@
 "use client"
-import React from 'react'
+import React, { useEffect } from 'react'
 import Profile_section from '../../_components/profile_section'
 import Nopins from '../../_components/no_pin'
 import { useUser } from '@clerk/nextjs'
@@ -12,21 +12,48 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel,
 const page = () => {
   const [active, setActive]=React.useState(false)
   const [sorted, setSorted]=React.useState(false)
+  const {user, isLoaded}=useUser()
+
+  const [username, setUsername] = React.useState('')
+
+const fetchUserProfile = async () => {
+    if (user) {
+        const email = user.emailAddresses[0].emailAddress
+        try {
+            const response = await fetch(`/api/user?email=${email}`)
+            if (!response.ok) {
+                throw new Error('Network response was not ok')
+            }
+            const res = await response.json()
+            console.log(res.data.username)
+
+            if (res.success) {
+                setUsername(res.data.username)
+            }
+        } catch (error) {
+
+        }
+    }
+}
+
+useEffect(() => {
+  if (isLoaded) {
+      fetchUserProfile()
+  }
+}, [user, isLoaded])
 
   const boards = [
-    { user: "user_2nJ9SYAXcPeU6OghO7vvBRTg4Li", public: false, cover: '/a4.jpg', images: [{ url: '/a8.jpg' }, { url: '/a5.jpg' }], title: "Travel Ideas", image: "/board1.jpg", pins: 25 },
-    { user: "user_2nJ9SYAXcPeU6OghO7vvBRTg4Li", public: false, cover: '/a4.jpg', images: [{ url: '/a8.jpg' }, { url: '/a5.jpg' }], title: "Art", image: "/board2.jpg", pins: 40 },
-    { user: "user_2nJ9SYAXcPeU6OghO7vvBRTg4Li", public: true, cover: '/a4.jpg', images: [{ url: '/a8.jpg' }, { url: '/a5.jpg' }], title: "Photography", image: "/board3.jpg", pins: 18 },
-    { user: "user_2nJ9SYAXcPeU6OghO7vvBRTg4Li", public: true, cover: '/a4.jpg', images: [{ url: '/a8.jpg' }, { url: '/a5.jpg' }], title: "DIY Projects", image: "/board4.jpg", pins: 10 },
-    { user: "user_2nJ9SYAXcPeU6OghO7vvBRTg4Li", public: false, cover: '/a4.jpg', images: [{ url: '/a8.jpg' }, { url: '/a5.jpg' }], title: "Travel Ideas", image: "/board1.jpg", pins: 25 },
-    { user: "user_2nJ9SYAXcPeU6OghO7vvBRTg4Li", public: false, cover: '/a4.jpg', images: [{ url: '/a8.jpg' }, { url: '/a5.jpg' }], title: "Art", image: "/board2.jpg", pins: 40 },
-    { user: "user_2nJ9SYAXcPeU6OghO7vvBRTg4Li", public: true, cover: '/a4.jpg', images: [{ url: '/a8.jpg' }, { url: '/a5.jpg' }], title: "Photography", image: "/board3.jpg", pins: 18 },
-    { user: "user_2nJ9SYAXcPeU6OghO7vvBRTg4Li", public: true, cover: '/a4.jpg', images: [{ url: '/a8.jpg' }, { url: '/a5.jpg' }], title: "DIY Projects", image: "/board4.jpg", pins: 10 },
+    { public: false, cover: '/a4.jpg', images: [{ url: '/a8.jpg' }, { url: '/a5.jpg' }], title: "Travel Ideas", image: "/board1.jpg", pins: 25 },
+    { public: false, cover: '/a4.jpg', images: [{ url: '/a8.jpg' }, { url: '/a5.jpg' }], title: "Art", image: "/board2.jpg", pins: 40 },
+    { public: true, cover: '/a4.jpg', images: [{ url: '/a8.jpg' }, { url: '/a5.jpg' }], title: "Photography", image: "/board3.jpg", pins: 18 },
+    { public: true, cover: '/a4.jpg', images: [{ url: '/a8.jpg' }, { url: '/a5.jpg' }], title: "DIY Projects", image: "/board4.jpg", pins: 10 },
+    { public: false, cover: '/a4.jpg', images: [{ url: '/a8.jpg' }, { url: '/a5.jpg' }], title: "Travel Ideas", image: "/board1.jpg", pins: 25 },
+    { public: false, cover: '/a4.jpg', images: [{ url: '/a8.jpg' }, { url: '/a5.jpg' }], title: "Art", image: "/board2.jpg", pins: 40 },
+    { public: true, cover: '/a4.jpg', images: [{ url: '/a8.jpg' }, { url: '/a5.jpg' }], title: "Photography", image: "/board3.jpg", pins: 18 },
+    { public: true, cover: '/a4.jpg', images: [{ url: '/a8.jpg' }, { url: '/a5.jpg' }], title: "DIY Projects", image: "/board4.jpg", pins: 10 },
 
     // Add more boards as needed
-  ];
-
-  const { isLoaded } = useUser()
+  ]
 
   if (!isLoaded) return <div className="flex items-center justify-center absolute h-screen bg-white w-screen top-0 left-0">
   <div className='loader'></div>

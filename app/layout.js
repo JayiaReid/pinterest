@@ -5,6 +5,7 @@ import { ThemeProvider } from "./Theme";
 import { ClerkProvider } from "@clerk/nextjs";
 import Nav from "./_components/header";
 import { shadesOfPurple } from '@clerk/themes'
+import { Toaster } from "@/components/ui/toaster";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -40,6 +41,7 @@ export default function RootLayout({ children }) {
           >
             <Nav/>
         {children}
+        <Toaster/>
         </ThemeProvider>
       </body>
     </html>

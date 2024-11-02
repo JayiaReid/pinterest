@@ -1,6 +1,6 @@
 "use client"
 import Image from 'next/image'
-import React from 'react'
+import React, { useEffect } from 'react'
 import Link from 'next/link'
 import { DropdownMenu, DropdownMenuCheckboxItem, DropdownMenuContent, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
 import { ChevronDown, Search } from 'lucide-react'
@@ -26,8 +26,36 @@ const Head = () => {
 
   const router = useRouter()
   // for now user.name
-  const { user } = useUser()
-  const username = user.id
+  const {user, isLoaded}=useUser()
+
+  const [username, setUsername] = React.useState('')
+  const [photo, setPhoto] = React.useState('')
+
+const fetchUserProfile = async () => {
+    if (user) {
+        const email = user.emailAddresses[0].emailAddress
+        try {
+            const response = await fetch(`/api/user?email=${email}`)
+            if (!response.ok) {
+                throw new Error('Network response was not ok')
+            }
+            const res = await response.json()
+
+            if (res.success) {
+                setUsername(res.data.username)
+                setPhoto(res.data.photo)
+            }
+        } catch (error) {
+
+        }
+    }
+}
+
+useEffect(() => {
+  if (isLoaded) {
+      fetchUserProfile()
+  }
+}, [user, isLoaded])
 
   React.useEffect(() => {
     // console.log(router.pathname)
@@ -83,7 +111,7 @@ const Head = () => {
         <Link href={`/user/${username}/saved`} className=" w-[40px] max-w-[70px] h-[40px] flex items-center justify-center">
           <Avatar className="w-full h-full">
             <AvatarImage
-              src="/pp.jpeg"
+              src={photo}
               alt="profile picture"
               className="object-cover rounded-full"
               width={30}

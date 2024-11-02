@@ -1,5 +1,5 @@
 "use client"
-import React from 'react'
+import React, { useEffect } from 'react'
 // import Head from './home_comps/user_head'
 import PinterestHeader from './home_comps/user_head'
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from '@/components/ui/carousel'
@@ -9,10 +9,63 @@ import Create from '../(routes)/user/[username]/created/_components/Create'
 import Pin from '../(routes)/pins/_components/Pin'
 import Link from 'next/link'
 import { useUser } from '@clerk/nextjs'
+import { useRouter } from 'next/navigation'
 
 
 const Home_user = () => {
-  const {user} = useUser()
+  const {user, isLoaded} = useUser()
+  const router = useRouter()
+
+  const checkUser = async ()=>{
+    if(user){
+
+      const email = user.emailAddresses[0].emailAddress
+
+      // use axios
+      try {
+        const response = await fetch(`/api/user?email=${email}`, {
+          method: 'GET', 
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        })
+        console.log(response.status)
+        if (response.status === 404) {
+          const userData = {
+            firstName: user.firstName,
+            lastName: user.lastName || 'no last name',
+            email: email,
+            about: "",
+            website: "",
+            username: user.id,
+            photo: "/b11.jpg",
+            followersNum: 0,
+            followingNum: 0,
+          }
+
+          const res = await fetch('/api/user', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(userData),
+          })
+          console.log(res)
+          if (res.ok) {
+            router.push('/settings/profile')
+          }
+        }
+      } catch (error) {
+        console.error('Error checking or creating user:', error)
+      }
+    }
+  }
+
+  useEffect(()=>{
+    if (isLoaded) {
+      checkUser()
+    }
+  }, [user, isLoaded])
 
   const sections = [
     { board_id: 1, name: "Art", image: "/a10.jpg"},
@@ -35,9 +88,10 @@ const Home_user = () => {
     "#3a5a40",
   ]
 
+  // check if user exits if not create user and navigate to the profile page
   const getRandomColor = () => {
-    return colors[Math.floor(Math.random() * colors.length)];
-  };
+    return colors[Math.floor(Math.random() * colors.length)]
+  }
 
   const pins = [
     { image: "/a0.jpg", user: "user_2nJ9SYAXcPeU6OghO7vvBRTg4Li" },
