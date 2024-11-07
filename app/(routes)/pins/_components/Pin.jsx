@@ -23,7 +23,7 @@ const HoverComp = ({size}) => {
   )
 }
 
-const Pin = ({ pin, id, size }) => {
+const Pin = ({ pin, size }) => {
   const [show, setShow] = React.useState(false)
 
   const { user } = useUser()
@@ -36,7 +36,7 @@ const Pin = ({ pin, id, size }) => {
       onMouseOut={() => setShow(false)}
     >
 
-      <Link href={`/pins/${id}`} className="flex flex-col gap-3">
+      <Link href={`/pins/${pin._id}`} className="flex flex-col gap-3">
         <div className={`relative w-[${size || '250'}px] `}>
           <Image className="rounded-2xl" src={pin.image} width={290} height={400} alt="Pin" />
           {show && <HoverComp size={size}/>}

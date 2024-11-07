@@ -1,10 +1,20 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-    images: {
-      domains: ['i.pinimg.com'],
-    },
-    reactStrictMode: true,
-  };
-  
-  export default nextConfig;
-  
+  images: {
+      remotePatterns: [
+          {
+              protocol: 'https',
+              hostname: '**', 
+              port: '', 
+          },
+          {
+              protocol: 'http',
+              hostname: '**', 
+              port: '', 
+          },
+      ],
+  },
+  reactStrictMode: true,
+};
+
+export default nextConfig;

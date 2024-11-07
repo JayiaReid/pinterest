@@ -7,27 +7,16 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { useUser } from '@clerk/nextjs'
 import { Edit2, LoaderCircleIcon, MoreHorizontal, SlidersHorizontalIcon, Sparkles, SquareStack } from 'lucide-react'
-import { useParams } from 'next/navigation'
+import { useParams, useSearchParams } from 'next/navigation'
 import React from 'react'
 import Edit from '../_components/Edit'
 
 const page = () => {
   const [edit, setEdit] = React.useState(false)
   const [size, setSize] = React.useState(200)
- 
-
-  const section = { user: "user_2nJ9SYAXcPeU6OghO7vvBRTg4Li", board: "photography", cover: '/a4.jpg', images: [{ url: '/a8.jpg' }, { url: '/a5.jpg' }], title: "Photography", image: "/board3.jpg", pins: 18 }
- const [name, setName] = React.useState(section.board)
-  const pins = [
-    { image: "/a0.jpg", user: "user_2nJ9SYAXcPeU6OghO7vvBRTg4Li" },
-    { image: "/a1.jpg", user: "user_2nJ9SYAXcPeU6OghO7vvBRTg4Li" },
-    { image: "/a2.jpg", user: "user_2nJ9SYAXcPeU6OghO7vvBRTg4Li" },
-    { image: "/a3.jpg", user: "user_2nJ9SYAXcPeU6OghO7vvBRTg4Li" },
-    { image: "/a4.jpg", user: "user_2nJ9SYAXcPeU6OghO7vvBRTg4Li" },
-    { image: "/a5.jpg", user: "user_2nJ9SYAXcPeU6OghO7vvBRTg4Li" },
-    { image: "/a6.jpg", user: "user_2nJ9SYAXcPeU6OghO7vvBRTg4Li" },
-    { image: "/a7.jpg", user: "user_2nJ9SYAXcPeU6OghO7vvBRTg4Li" }
-  ]
+  const searchParams = useSearchParams()
+  const section = searchParams.get('section') ? JSON.parse(decodeURIComponent(searchParams.get('section'))) : null
+  const board = searchParams.get('board') ? JSON.parse(decodeURIComponent(searchParams.get('board'))):null
 
   const { isLoaded } = useUser()
 
@@ -38,10 +27,10 @@ const page = () => {
   return (
     <div className='flex flex-col items-center mt-10 gap-5'>
       <div className='flex flex-col gap-2 items-center'>
-        <h2 className="text-2xl font-semibold text-muted-foreground">{section.board}</h2>
+        <h2 className="text-2xl font-semibold text-muted-foreground">{board?.title}</h2>
         <div className='flex gap-2 items-center'>
           <h2 className="text-4xl font-semibold text-foreground">{section.title}</h2>
-        <Edit board={section} type="section"/>
+        <Edit board={section} type="section" title2={board?.title}/>
         </div>
         
 
@@ -52,7 +41,7 @@ const page = () => {
       </div>
       <div className='w-full p-5'>
         <div className='flex p-5 justify-between items-center'>
-          <h2 className='font-semibold text-lg'>{section.pins} Pins</h2>
+          <h2 className='font-semibold text-lg'>{section.pins?.length} Pins</h2>
           <DropdownMenu>
             <DropdownMenuTrigger>
               <Button variant="muted" className=" rounded-full h-[60px] w-[60px] font-bold"><SlidersHorizontalIcon size={30} strokeWidth={2.5} /></Button>
@@ -78,7 +67,7 @@ const page = () => {
         <div
           style={{ columnWidth: size ? `${size}px` : '250px' }}
           className={`${size ? "gap-2 p-2" : "gap-4 p-4"}`}>
-          {pins.map((pin, index) => (
+          {section.pins?.map((pin, index) => (
             <div className="p-5">
               <Pin size={size} key={index} className="rounded-2xl" pin={pin} id={index} />
               {/* <h2>Info</h2> */}

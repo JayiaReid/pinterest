@@ -13,7 +13,6 @@ export default function Home() {
     <div className='loader'></div>
   </div>
 
-// note: code is a bit messy because of dummy data but all will be organized once i have implemented backend
   return (
     <div className="h-screen">
       {isSignedIn? <Home_user/> : <Root_Home/> }

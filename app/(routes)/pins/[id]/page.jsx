@@ -8,67 +8,124 @@ import { ChevronDown, ChevronUp, HeartIcon, LoaderCircleIcon, MoreHorizontal, Sh
 import Image from 'next/image'
 import Link from 'next/link'
 import { useParams, useRouter } from 'next/navigation'
-import React from 'react'
+import React, { useEffect } from 'react'
 import Pin from '../_components/Pin'
 import Pin_map from '@/app/_components/global_comps/pin_map'
 
 const Page = () => {
 
   const { id } = useParams()
-
+  const { isLoaded } = useUser()
   const router = useRouter()
   const [showComments, setShowComments] = React.useState(false)
+  const [pin, setPin] = React.useState({})
+  const [liked, setLiked] = React.useState(false)
   // const [liked, setLiked] = React.useState(false)
   const [comment, setComment] = React.useState({
-    user_id: "user_2nJ9SYAXcPeU6OghO7vvBRTg4Li",
-    user: "Ola Ziolek",
+    user_id: "",
+    user: "",
     content: ""
   })
-  const [pin, setPin] = React.useState({
-    image: `/a${id}.jpg`,
-    likes: 12,
-    liked: false,
-    title: "Dinner Date Aesthetic",
-    description: "Dinner Date Aesthetic",
-    user_id: "user_2nJ9SYAXcPeU6OghO7vvBRTg4Li",
-    comments: [
-      { id: 1, user: "Emma", content: "Beautiful <3" }
-    ]})
 
-  const user = {
-    Full_Name: "Ola Ziolek",
-    followers: 88,
-    id: "user_2nJ9SYAXcPeU6OghO7vvBRTg4Li",
+  const fetchPins = async ()=>{
+    try {
+      const response = await fetch('/api/pin',{
+        method: "GET",
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      })
+
+      if(response.ok){
+        const res = await response.json()
+        const pin = res.data.filter(pin=> pin._id == id)
+        setPin(pin[0])
+        console.log(pin[0])
+        const user_id = pin[0].user._id
+        const user = pin[0].user.username
+        setComment((prevData) => ({ ...prevData, user, user_id}))
+
+        // check if liked
+        setLiked(pin[0].likes.some(like => like.user === user_id))
+      }
+    } catch (error) {
+      console.log(error)
+    }
   }
 
-  const { isLoaded } = useUser()
+  const likePin = async ()=>{
 
-  // have an update pin function that updates the pin in database when a change occurs
+    if(liked){
+      try {
+        const response = await fetch('/api/pin/like', {
+          method: "DELETE",
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            user: pin.user._id,
+            pin: id
+          })
+        })
 
-  const likePin = ()=>{
-    setPin(pin => ({ ...pin, liked: !pin.liked }))
-    // update in db
+        if(response.ok){
+          fetchPins();
+          setLiked(false)
+        }
+      } catch (error) {
+        console.log(error)
+      }
+    }else{
+      try {
+        const response = await fetch('/api/pin/like', {
+          method: "POST",
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            user: pin.user._id,
+            pin: id
+          })
+        })
+
+        if(response.ok){
+          fetchPins();
+          setLiked(true)
+        }
+      } catch (error) {
+        console.log(error)
+      }
+    }
   }
 
-  const addComment = () => {
+  const addComment = async () => {
     if (comment.content.trim() === "") return
 
     // Create a new comment object
     const newComment = {
-      id: pin.comments.length + 1,
-      user: comment.user,
+      user: comment.user_id,
+      pin: id,
       content: comment.content
     }
 
-    
-    setPin(prevPin => ({
-      ...prevPin,
-      comments: [...prevPin.comments, newComment]
-    }))
+    try {
+      const response = await fetch('/api/pin/comment', {
+        method: "POST",
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(newComment)
+      })
+
+      if(response.ok){
+        fetchPins();
+      }
+    } catch (error) {
+      console.log(error)
+    }
 
     setComment({ ...comment, content: "" })
 
-    // update in db
   }
 
   const pins = [
@@ -80,6 +137,12 @@ const Page = () => {
     { image: "/a5.jpg", user: "user_2nJ9SYAXcPeU6OghO7vvBRTg4Li" },
     { image: "/a6.jpg", user: "user_2nJ9SYAXcPeU6OghO7vvBRTg4Li" },
     { image: "/a7.jpg", user: "user_2nJ9SYAXcPeU6OghO7vvBRTg4Li" }]
+
+    useEffect(()=>{
+      if(isLoaded){
+        fetchPins()
+      }
+    }, [isLoaded])
 
     if (!isLoaded) return <div className="flex items-center justify-center absolute h-screen bg-white w-screen top-0 left-0">
     <div className='loader'></div>
@@ -93,24 +156,25 @@ const Page = () => {
       <div className='flex mx-5 my-10 items-center w-full h-full justify-center'>
         <Card className="rounded-3xl shadow-lg border-none">
           <CardContent className="m-0 p-0 flex flex-col md:flex-row lg-flex-row xl:flex-row">
-            <Image className="rounded-2xl" src={pin.image} width={500} height={400} alt="Pin" />
+            <Image className="rounded-2xl" src={pin?.image} width={500} height={400} alt="Pin" />
             <div className='p-8 flex flex-col gap-8'>
               <div className='flex items-center justify-between'>
                 <div className='flex gap-5'>
                   <div className='flex gap-2'>
-                    <HeartIcon className='cursor-pointer' onClick={() => likePin()}strokeWidth={`${pin.liked? 0 : 3}`} size={20} fill={`${pin.liked? 'red' : 'transparent'}`}/>
-                    <h2>{pin.likes}</h2>
+                    <HeartIcon className='cursor-pointer' onClick={() => likePin()}strokeWidth={`${pin.liked? 0 : 3}`} size={20} fill={`${liked? 'red' : 'transparent'}`}/>
+                    <h2>{pin.likes?.length}</h2>
                   </div>
                   <Share strokeWidth={3} size={20} />
                   <Download strokeWidth={3} size={20}/>
                 </div>
                 <Button size={30} className="bg-primary text-white self-end text-lg px-4 py-2 rounded-3xl shadow-none">Save</Button>
               </div>
-              <h2 className='text-2xl font-semibold'>{pin.title}</h2>
-              <h2>{pin.description}</h2>
+              <h2 className='text-2xl font-semibold'>{pin?.title}</h2>
+              <h2>{pin?.description}</h2>
+              {pin.link && <Link href={pin?.link} className='font-bold'>{pin?.link }</Link>}
 
               <div className='flex items-center justify-between'>
-                <Link href={`/user/${user.id}/created`} className="flex items-center gap-2">
+                <Link href={`/user/${pin.user?.username}/created`} className="flex items-center gap-2">
                   <Avatar className="w-[40px] max-w-[70px] h-[40px]">
                     <AvatarImage
                       src="/pp.jpeg"
@@ -122,8 +186,8 @@ const Page = () => {
                     <AvatarFallback>CN</AvatarFallback>
                   </Avatar>
                   <div>
-                    <h2 className="text-sm font-semibold">{user.Full_Name}</h2>
-                    <h2 className="text-sm">{user.followers} followers</h2>
+                    <h2 className="text-sm font-semibold">{pin.user?.firstName} {pin.user?.lastName}</h2>
+                    <h2 className="text-sm">{pin.user?.followersNum} followers</h2>
                   </div>
                 </Link>
                 <Button variant="outline" size={30} className=" text-foreground self-end text-lg px-4 py-2 rounded-3xl shadow-none">Follow</Button>
@@ -131,7 +195,7 @@ const Page = () => {
 
               <div className='flex flex-col gap-5'>
                 <div className='flex justify-between items-center'>
-                  <h2 className='font-semibold'>{pin.comments.length} Comments</h2>
+                  <h2 className='font-semibold'>{pin.comments?.length} Comments</h2>
                   {showComments ? (
                     <ChevronUp className='cursor-pointer' strokeWidth={3} size={20} onClick={() => setShowComments(false)} />
                   ) : (
@@ -139,12 +203,12 @@ const Page = () => {
                   )}
                 </div>
 
-                {pin.comments.length > 0 ? (
+                {pin.comments?.length > 0 ? (
                   showComments && (
                     <div>
                       {pin.comments.map((comment) => (
-                        <h2 className='my-4' key={comment.id}>
-                          <span className='font-semibold'>{comment.user}</span> {comment.content}
+                        <h2 className='my-4' key={comment._id}>
+                          <span className='font-semibold'>{comment.user.firstName} {comment.user.lastName}</span> {comment.content}
                         </h2>
                       ))}
                     </div>

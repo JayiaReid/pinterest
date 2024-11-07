@@ -1,7 +1,5 @@
 import PinterestDB from '@/lib/database'
-import User from '@/models/User'
-import { NextResponse } from 'next/server'
-import { NextRequest } from 'next/server'
+import user_profile from '@/models/user_profile'
 
 export async function GET(req) {
   const { searchParams } = new URL(req.url)
@@ -10,15 +8,15 @@ export async function GET(req) {
   await PinterestDB()
 
   try {
-    const userProfile = await User.findOne({ email })
-    if (!userProfile) {
+    const user = await user_profile.findOne({ email }).populate('boards')
+    if (!user) {
       return new Response(JSON.stringify({ success: false, message: 'User profile not found' }), {
         status: 404,
         headers: { 'Content-Type': 'application/json' },
       })
     }
 
-    return new Response(JSON.stringify({ success: true, data: userProfile }), {
+    return new Response(JSON.stringify({ success: true, data: user }), {
       status: 200,
       headers: { 'Content-Type': 'application/json' },
     })
@@ -36,9 +34,9 @@ export async function POST(req, res) {
 
   try {
     const body = await req.json()
-    console.log(body)
+    // console.log(body)
 
-    const newUser = new User({
+    const newUser = new user_profile({
       firstName: body.firstName,
       lastName: body.lastName,
       email: body.email,
@@ -51,7 +49,10 @@ export async function POST(req, res) {
       followers: [],
       following: [],
       createdAt: new Date(),
+      boards: []
     })
+
+    // ensure not same username
 
     // const newUser = new UserProfile(userInfo)
     const savedUser = await newUser.save()
@@ -74,6 +75,7 @@ export async function PUT(req) {
   try {
     const body = await req.json()
     const { email, firstName, lastName, about, website, username, photo } = body
+    // console.log(body)
 
     if (!firstName || !lastName || !username) {
       return new Response(JSON.stringify({ success: false, message: 'Missing required fields' }), {
@@ -82,7 +84,7 @@ export async function PUT(req) {
       })
     }
 
-    const result = await User.updateOne(
+    const result = await user_profile.updateOne(
       { email: email },
       {
         $set: {

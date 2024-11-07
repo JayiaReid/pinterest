@@ -1,5 +1,5 @@
 import { CheckCheck, ImageUp, MoreHorizontal, PlusIcon } from 'lucide-react'
-import React from 'react'
+import React, { useEffect } from 'react'
 import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { Input } from '@/components/ui/input'
@@ -10,28 +10,168 @@ import { Checkbox } from '@/components/ui/checkbox'
 import { Button } from '@/components/ui/button'
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog'
 import Pin_map from '@/app/_components/global_comps/pin_map'
+import { toast } from '@/hooks/use-toast'
+import { useRouter } from 'next/navigation'
 
-const Edit = ({ board, type }) => {
+const Edit = ({ board, type, username, title2 }) => {
 
     const [active, setActive] = React.useState(false)
-    const [image, setImage] = React.useState('/landing.jpg')
-    const [title, setTitle] = React.useState(board.title)
-    const [description, setDescription] = React.useState(board.description)
-    const [secret, setSecret] = React.useState(board.secret)
-    const [isDialogOpen, setIsDialogOpen] = React.useState(false) //for select cover dialog
+    const [image, setImage] = React.useState("")
+    const [title, setTitle] = React.useState("")
+    const [description, setDescription] = React.useState("")
+    const [secret, setSecret] = React.useState(false)
+    const [isDialogOpen, setIsDialogOpen] = React.useState(false)
+    const router = useRouter()
 
     const deleteBoard = async () => {
-        // delete board
+        const response = await fetch('/api/board', {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                _id: board?._id,
+                user: board.user
+            }),
+        })
+
+        const result = await response.json()
+        if (result.success) {
+            // toast
+            toast({
+                title: "Board deleted successfully",
+                description: result.message
+            })
+            setActive(false)
+            router.push(`/user/${username}/saved`)
+        } else {
+            toast({
+                title: "Error deleting board",
+                description: result.message
+            })
+        }
+    }
+
+    const deleteSection = async () => {
+        const response = await fetch('/api/section', {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                _id: board?._id,
+                board: board?.board
+            }),
+        })
+
+        const result = await response.json()
+        if (result.success) {
+            // toast
+            toast({
+                title: "section deleted successfully",
+                description: result.message
+            })
+            setActive(false)
+            router.push(`/user/${username}/${title2}`)
+        } else {
+            toast({
+                title: "Error deleting section",
+                description: result.message
+            })
+        }
+    }
+
+    const uploadImage = async (file) => {
+        const response = await fetch(`/api/upload?filename=${file.name}`, {
+            method: 'POST',
+            body: file,
+        })
+        const result = await response.json()
+        setImage(result.url)
+
+    }
+
+    const updateSection = async () => {
+        const data = {
+            title,
+            _id: board._id,
+            images: board.images
+        }
+
+        const response = await fetch('/api/section', {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(data),
+        })
+
+        const result = await response.json()
+        if (result.success) {
+            // toast
+            toast({
+                title: "Section updated successfully",
+                description: result.message
+            })
+            setActive(false)
+            router.push(`/user/${username}/${title2}`)
+        } else {
+            toast({
+                title: "Error updating board",
+                description: result.message
+            })
+        }
     }
 
     const updateBoard = async () => {
-        // update board
+        const data = {
+            title,
+            secret,
+            description,
+            cover: image,
+            _id: board?._id,
+            images: board?.images
+        }
+        const response = await fetch('/api/board', {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(data),
+        })
+
+        const result = await response.json()
+        if (result.success) {
+            // toast
+            toast({
+                title: "Board updated successfully",
+                description: result.message
+            })
+            setActive(false)
+            router.push(`/user/${username}/${title}`)
+        } else {
+            toast({
+                title: "Error updating board",
+                description: result.message
+            })
+        }
+    }
+
+    const initialize = () => {
+        console.log(board)
+        if (board) {
+            setImage(board.cover);
+            setTitle(board.title);
+            setDescription(board.description);
+            setSecret(board.private);
+            console.log("update")
+        }
     }
 
     return (
         <div>
             <Dialog onOpenChange={(isOpen) => !isOpen && setActive(false)}>
-                <DialogTrigger><MoreHorizontal size={30} strokeWidth={2.5} className={`${active ? "bg-foreground text-background" : "bg-muted text-foreground"} rounded-full p-2`} /></DialogTrigger>
+                <DialogTrigger><MoreHorizontal size={30} strokeWidth={2.5} onClick={() => initialize()} className={`${active ? "bg-foreground text-background" : "bg-muted text-foreground"} rounded-full p-2`} /></DialogTrigger>
                 <DialogContent>
                     <ScrollArea className={`${type == "section" ? 'auto' : 'h-[500px]'}`}>
                         <DialogHeader>
@@ -64,14 +204,30 @@ const Edit = ({ board, type }) => {
                                             <DialogContent className="w-[500px] h-3/4">
                                                 <ScrollArea >
                                                     <h2>Change board cover</h2>
-                                                    <div className='columns-3'>
-                                                        {board.Pins.map((pin)=>(
-                                                    <Image onClick={()=>{setImage(pin.image); setIsDialogOpen(false)}} src={pin.image} width={290} height={400} className='p-2 rounded-2xl'/>
-                                                ))}
+                                                    {board.pins && <div className='columns-3'>
+                                                        {board.pins.map((pin) => (
+                                                            <Image onClick={() => { setImage(pin.image); setIsDialogOpen(false) }} src={pin.image} width={290} height={400} className='p-2 rounded-2xl' />
+                                                        ))}
+                                                    </div>}
+
+                                                    <div>
+                                                        <Input
+                                                            type="file"
+                                                            id="fileInput"
+                                                            onChange={(e) => {
+                                                                const file = e.target.files[0];
+                                                                if (file) {
+                                                                    uploadImage(file)
+                                                                    setIsDialogOpen(false)
+                                                                }
+                                                            }}
+                                                            className="rounded-3xl p-2 my-5  text-center bg-muted border-2 shadow-none border-dotted"
+                                                        />
+                                                        <Button>Upload Image</Button>
                                                     </div>
-                                                
+
                                                 </ScrollArea>
-                                                
+
                                             </DialogContent>
                                         </Dialog>
 
@@ -95,38 +251,50 @@ const Edit = ({ board, type }) => {
                                     </div>
                                     <div>
                                     </div></div>}
-                                    <div>
-                                        <h2 className='text-sm'>Action</h2>
+                                <div>
+                                    <h2 className='text-sm'>Action</h2>
 
-                                        <AlertDialog>
-                                            <AlertDialogTrigger asChild>
-                                                <h2 className='text-lg font-semibold cursor-pointer mt-2'>Delete {type}</h2>
-                                            </AlertDialogTrigger>
-                                            <AlertDialogContent>
-                                                <AlertDialogHeader>
-                                                    <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
-                                                    <AlertDialogDescription>
-                                                        This action cannot be undone. This will permanently delete your
-                                                        {type}.
-                                                    </AlertDialogDescription>
-                                                </AlertDialogHeader>
-                                                <AlertDialogFooter>
-                                                    <AlertDialogCancel>Cancel</AlertDialogCancel>
-                                                    <AlertDialogAction onClick={() => deleteBoard()}>Continue</AlertDialogAction>
-                                                </AlertDialogFooter>
-                                            </AlertDialogContent>
-                                        </AlertDialog>
-                                        <h2 className='text-md font-medium text-muted-foreground'>{type} will be permanently deleted</h2>
-                                    </div>
+                                    <AlertDialog>
+                                        <AlertDialogTrigger asChild>
+                                            <h2 className='text-lg font-semibold cursor-pointer mt-2'>Delete {type}</h2>
+                                        </AlertDialogTrigger>
+                                        <AlertDialogContent>
+                                            <AlertDialogHeader>
+                                                <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+                                                <AlertDialogDescription>
+                                                    This action cannot be undone. This will permanently delete your
+                                                    {type}.
+                                                </AlertDialogDescription>
+                                            </AlertDialogHeader>
+                                            <AlertDialogFooter>
+                                                <AlertDialogCancel>Cancel</AlertDialogCancel>
+                                                <AlertDialogAction onClick={() => {
+                                                    if (type == "board") {
+                                                        deleteBoard()
+                                                    } else {
+                                                        deleteSection()
+                                                    }
+                                                }}>Continue</AlertDialogAction>
+                                            </AlertDialogFooter>
+                                        </AlertDialogContent>
+                                    </AlertDialog>
+                                    <h2 className='text-sm font-medium text-muted-foreground'>{type} will be permanently deleted</h2>
+                                </div>
 
-                                
+
 
                             </div>
                         </DialogHeader>
                     </ScrollArea>
                     <DialogFooter>
                         <DialogClose asChild>
-                            <Button disabled={!(title)} onClick={() => updateBoard()} type="submit" className="rounded-2xl mt-5">Done</Button>
+                            <Button disabled={!(title)} onClick={() => {
+                                if (type == "board") {
+                                    updateBoard()
+                                } else {
+                                    updateSection()
+                                }
+                            }} type="submit" className="rounded-2xl mt-5">Done</Button>
                         </DialogClose>
 
                     </DialogFooter>

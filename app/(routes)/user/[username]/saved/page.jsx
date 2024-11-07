@@ -13,7 +13,7 @@ const page = () => {
   const [active, setActive]=React.useState(false)
   const [sorted, setSorted]=React.useState(false)
   const {user, isLoaded}=useUser()
-
+  const [boards, setBoards]=React.useState([])
   const [username, setUsername] = React.useState('')
 
 const fetchUserProfile = async () => {
@@ -25,9 +25,10 @@ const fetchUserProfile = async () => {
                 throw new Error('Network response was not ok')
             }
             const res = await response.json()
-            console.log(res.data.username)
+            // console.log(res.data)
 
             if (res.success) {
+              setBoards(res.data.boards)
                 setUsername(res.data.username)
             }
         } catch (error) {
@@ -36,24 +37,17 @@ const fetchUserProfile = async () => {
     }
 }
 
+const getSortedBoards = () => {
+  return sorted
+    ? [...boards].sort((a, b) => a.title.localeCompare(b.title))
+    : boards
+}
+
 useEffect(() => {
   if (isLoaded) {
       fetchUserProfile()
   }
 }, [user, isLoaded])
-
-  const boards = [
-    { public: false, cover: '/a4.jpg', images: [{ url: '/a8.jpg' }, { url: '/a5.jpg' }], title: "Travel Ideas", image: "/board1.jpg", pins: 25 },
-    { public: false, cover: '/a4.jpg', images: [{ url: '/a8.jpg' }, { url: '/a5.jpg' }], title: "Art", image: "/board2.jpg", pins: 40 },
-    { public: true, cover: '/a4.jpg', images: [{ url: '/a8.jpg' }, { url: '/a5.jpg' }], title: "Photography", image: "/board3.jpg", pins: 18 },
-    { public: true, cover: '/a4.jpg', images: [{ url: '/a8.jpg' }, { url: '/a5.jpg' }], title: "DIY Projects", image: "/board4.jpg", pins: 10 },
-    { public: false, cover: '/a4.jpg', images: [{ url: '/a8.jpg' }, { url: '/a5.jpg' }], title: "Travel Ideas", image: "/board1.jpg", pins: 25 },
-    { public: false, cover: '/a4.jpg', images: [{ url: '/a8.jpg' }, { url: '/a5.jpg' }], title: "Art", image: "/board2.jpg", pins: 40 },
-    { public: true, cover: '/a4.jpg', images: [{ url: '/a8.jpg' }, { url: '/a5.jpg' }], title: "Photography", image: "/board3.jpg", pins: 18 },
-    { public: true, cover: '/a4.jpg', images: [{ url: '/a8.jpg' }, { url: '/a5.jpg' }], title: "DIY Projects", image: "/board4.jpg", pins: 10 },
-
-    // Add more boards as needed
-  ]
 
   if (!isLoaded) return <div className="flex items-center justify-center absolute h-screen bg-white w-screen top-0 left-0">
   <div className='loader'></div>
@@ -62,8 +56,6 @@ useEffect(() => {
   return (
     <div className='p-5'>
       <Profile_section state={true} />
-      {/* filter system */}
-      {/* board create */}
       <div className='flex px-5 justify-between '>
       <DropdownMenu onOpenChange={(isOpen) => !isOpen && setActive(false)}>
         <DropdownMenuTrigger onClick={()=>setActive(true)}>
@@ -89,8 +81,8 @@ useEffect(() => {
         <Create />
       </div>
       <div className=' grid grid-cols-2 xl:grid-cols-5 lg:grid-cols-4 md:grid-cols-3 sm:grid-cols-2'>
-        {boards.map((board, index) => (
-          <Board key={index} board={board} />
+        {getSortedBoards().map((board, index) => (
+          <Board key={index} board={board} user={username} />
         ))}
       </div>
 

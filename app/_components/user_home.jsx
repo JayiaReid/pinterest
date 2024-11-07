@@ -15,13 +15,32 @@ import { useRouter } from 'next/navigation'
 const Home_user = () => {
   const {user, isLoaded} = useUser()
   const router = useRouter()
+  const [userData, setUserData] = React.useState({})
+  const [pins, setPins] = React.useState([])
+
+  const fetchPins = async ()=>{
+    try {
+      const response = await fetch('/api/pin',{
+        method: "GET",
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      })
+
+      if(response.ok){
+        const res = await response.json()
+        setPins(res.data)
+      }
+    } catch (error) {
+      console.log(error)
+    }
+  }
 
   const checkUser = async ()=>{
     if(user){
 
       const email = user.emailAddresses[0].emailAddress
 
-      // use axios
       try {
         const response = await fetch(`/api/user?email=${email}`, {
           method: 'GET', 
@@ -29,7 +48,7 @@ const Home_user = () => {
             'Content-Type': 'application/json'
           }
         })
-        console.log(response.status)
+        // console.log(response)
         if (response.status === 404) {
           const userData = {
             firstName: user.firstName,
@@ -38,7 +57,7 @@ const Home_user = () => {
             about: "",
             website: "",
             username: user.id,
-            photo: "/b11.jpg",
+            photo: "/defaultpp.jpg",
             followersNum: 0,
             followingNum: 0,
           }
@@ -50,10 +69,14 @@ const Home_user = () => {
             },
             body: JSON.stringify(userData),
           })
-          console.log(res)
+          // console.log(res)
           if (res.ok) {
             router.push('/settings/profile')
           }
+        }else if(response.status == 200){
+          const res = await response.json()
+          setUserData(res.data)
+          console.log('found', res.data)
         }
       } catch (error) {
         console.error('Error checking or creating user:', error)
@@ -63,7 +86,8 @@ const Home_user = () => {
 
   useEffect(()=>{
     if (isLoaded) {
-      checkUser()
+      checkUser();
+      fetchPins()
     }
   }, [user, isLoaded])
 
@@ -93,37 +117,37 @@ const Home_user = () => {
     return colors[Math.floor(Math.random() * colors.length)]
   }
 
-  const pins = [
-    { image: "/a0.jpg", user: "user_2nJ9SYAXcPeU6OghO7vvBRTg4Li" },
-    { image: "/a1.jpg", user: "user_2nJ9SYAXcPeU6OghO7vvBRTg4Li" },
-    { image: "/a2.jpg", user: "user_2nJ9SYAXcPeU6OghO7vvBRTg4Li" },
-    { image: "/a3.jpg", user: "user_2nJ9SYAXcPeU6OghO7vvBRTg4Li" },
-    { image: "/a4.jpg", user: "user_2nJ9SYAXcPeU6OghO7vvBRTg4Li" },
-    { image: "/a5.jpg", user: "user_2nJ9SYAXcPeU6OghO7vvBRTg4Li" },
-    { image: "/a6.jpg", user: "user_2nJ9SYAXcPeU6OghO7vvBRTg4Li" },
-    { image: "/a7.jpg", user: "user_2nJ9SYAXcPeU6OghO7vvBRTg4Li" },
-    { image: "/a8.jpg", user: "user_2nJ9SYAXcPeU6OghO7vvBRTg4Li" },
-    { image: "/a9.jpg", user: "user_2nJ9SYAXcPeU6OghO7vvBRTg4Li" },
-    { image: "/a10.jpg", user: "user_2nJ9SYAXcPeU6OghO7vvBRTg4Li" },
-    { image: "/a11.jpg", user: "user_2nJ9SYAXcPeU6OghO7vvBRTg4Li" },
-    { image: "/a12.jpg", user: "user_2nJ9SYAXcPeU6OghO7vvBRTg4Li" },
-    { image: "/a13.jpg", user: "user_2nJ9SYAXcPeU6OghO7vvBRTg4Li" },
-    { image: "/a14.jpg", user: "user_2nJ9SYAXcPeU6OghO7vvBRTg4Li" },
-    { image: "/a15.jpg", user: "user_2nJ9SYAXcPeU6OghO7vvBRTg4Li" },
-    { image: "/a16.jpg", user: "user_2nJ9SYAXcPeU6OghO7vvBRTg4Li" },
-    { image: "/a17.jpg", user: "user_2nJ9SYAXcPeU6OghO7vvBRTg4Li" },
-    { image: "/a18.jpg", user: "user_2nJ9SYAXcPeU6OghO7vvBRTg4Li" },
-    { image: "/a19.jpg", user: "user_2nJ9SYAXcPeU6OghO7vvBRTg4Li" },
-    { image: "/a20.jpg", user: "user_2nJ9SYAXcPeU6OghO7vvBRTg4Li" },
-    { image: "/a21.jpg", user: "user_2nJ9SYAXcPeU6OghO7vvBRTg4Li" },
-    { image: "/a22.jpg", user: "user_2nJ9SYAXcPeU6OghO7vvBRTg4Li" },
-    { image: "/a23.jpg", user: "user_2nJ9SYAXcPeU6OghO7vvBRTg4Li" },
-    { image: "/a24.jpg", user: "user_2nJ9SYAXcPeU6OghO7vvBRTg4Li" },
-    { image: "/a25.jpg", user: "user_2nJ9SYAXcPeU6OghO7vvBRTg4Li" },
-    { image: "/a26.jpg", user: "user_2nJ9SYAXcPeU6OghO7vvBRTg4Li" },
-    { image: "/a27.jpg", user: "user_2nJ9SYAXcPeU6OghO7vvBRTg4Li" },
-    { image: "/a28.jpg", user: "user_2nJ9SYAXcPeU6OghO7vvBRTg4Li" },
-  ]
+  // const pins = [
+  //   { image: "/a0.jpg", user: "user_2nJ9SYAXcPeU6OghO7vvBRTg4Li" },
+  //   { image: "/a1.jpg", user: "user_2nJ9SYAXcPeU6OghO7vvBRTg4Li" },
+  //   { image: "/a2.jpg", user: "user_2nJ9SYAXcPeU6OghO7vvBRTg4Li" },
+  //   { image: "/a3.jpg", user: "user_2nJ9SYAXcPeU6OghO7vvBRTg4Li" },
+  //   { image: "/a4.jpg", user: "user_2nJ9SYAXcPeU6OghO7vvBRTg4Li" },
+  //   { image: "/a5.jpg", user: "user_2nJ9SYAXcPeU6OghO7vvBRTg4Li" },
+  //   { image: "/a6.jpg", user: "user_2nJ9SYAXcPeU6OghO7vvBRTg4Li" },
+  //   { image: "/a7.jpg", user: "user_2nJ9SYAXcPeU6OghO7vvBRTg4Li" },
+  //   { image: "/a8.jpg", user: "user_2nJ9SYAXcPeU6OghO7vvBRTg4Li" },
+  //   { image: "/a9.jpg", user: "user_2nJ9SYAXcPeU6OghO7vvBRTg4Li" },
+  //   { image: "/a10.jpg", user: "user_2nJ9SYAXcPeU6OghO7vvBRTg4Li" },
+  //   { image: "/a11.jpg", user: "user_2nJ9SYAXcPeU6OghO7vvBRTg4Li" },
+  //   { image: "/a12.jpg", user: "user_2nJ9SYAXcPeU6OghO7vvBRTg4Li" },
+  //   { image: "/a13.jpg", user: "user_2nJ9SYAXcPeU6OghO7vvBRTg4Li" },
+  //   { image: "/a14.jpg", user: "user_2nJ9SYAXcPeU6OghO7vvBRTg4Li" },
+  //   { image: "/a15.jpg", user: "user_2nJ9SYAXcPeU6OghO7vvBRTg4Li" },
+  //   { image: "/a16.jpg", user: "user_2nJ9SYAXcPeU6OghO7vvBRTg4Li" },
+  //   { image: "/a17.jpg", user: "user_2nJ9SYAXcPeU6OghO7vvBRTg4Li" },
+  //   { image: "/a18.jpg", user: "user_2nJ9SYAXcPeU6OghO7vvBRTg4Li" },
+  //   { image: "/a19.jpg", user: "user_2nJ9SYAXcPeU6OghO7vvBRTg4Li" },
+  //   { image: "/a20.jpg", user: "user_2nJ9SYAXcPeU6OghO7vvBRTg4Li" },
+  //   { image: "/a21.jpg", user: "user_2nJ9SYAXcPeU6OghO7vvBRTg4Li" },
+  //   { image: "/a22.jpg", user: "user_2nJ9SYAXcPeU6OghO7vvBRTg4Li" },
+  //   { image: "/a23.jpg", user: "user_2nJ9SYAXcPeU6OghO7vvBRTg4Li" },
+  //   { image: "/a24.jpg", user: "user_2nJ9SYAXcPeU6OghO7vvBRTg4Li" },
+  //   { image: "/a25.jpg", user: "user_2nJ9SYAXcPeU6OghO7vvBRTg4Li" },
+  //   { image: "/a26.jpg", user: "user_2nJ9SYAXcPeU6OghO7vvBRTg4Li" },
+  //   { image: "/a27.jpg", user: "user_2nJ9SYAXcPeU6OghO7vvBRTg4Li" },
+  //   { image: "/a28.jpg", user: "user_2nJ9SYAXcPeU6OghO7vvBRTg4Li" },
+  // ]
 
 
   return (
@@ -132,16 +156,16 @@ const Home_user = () => {
 
       <Carousel opts={{ align: "start" }} className="mx-20 mt-5 p-5 max-w-[90%]">
         <CarouselContent className=" w-[500px] flex gap-4">
-          {sections.map((section, index) => (
+          {userData.boards?.map((section, index) => (
             <CarouselItem key={index} className="basis-1/2">
               <Card className="border-none shadow-none bg-muted" style={{ backgroundColor: getRandomColor() }}>
                 <CardContent className="h-[100px] flex gap-5 p-5 items-center justify-start">
                   <div className="object-cover hover:border-transparent cursor-pointer border-white border-2 rounded-xl">
-                    <Link href={{pathname: `user/${user?.id}/${section.name}/more_ideas`, query: {board_id: section.board_id}}}><Image className="rounded-xl h-[70px] w-[70px] object-cover " src={section.image} width={50} height={50} /></Link>
+                    <Link href={{pathname: `user/${userData.username}/${section.title}/more_ideas`, query: {board_id: section._id}}}><Image className="rounded-xl max-h-[70px] max-w-[70px] object-cover " src={section.cover} width={50} height={50} /></Link>
                   </div>
                   <div className="flex flex-col ">
                     <h2 className="font-light text-md">More ideas for</h2>
-                    <h2 className="font-bold text-xl">{section.name}</h2>
+                    <h2 className="font-bold text-xl truncate-2-lines">{section.title}</h2>
                   </div>
 
                 </CardContent>
@@ -156,14 +180,14 @@ const Home_user = () => {
       <div className="columns-[240px] gap-4 p-4 pb-20">
         {pins.map((pin, index) => (
           <div className="p-5">
-            <Pin key={index} className="rounded-2xl" pin={pin} id={index} />
+            <Pin key={index} className="rounded-2xl" pin={pin} />
             {/* <h2>Info</h2> */}
           </div>
 
         ))}
 
       </div>
-      <Create state={true}/>
+      <Create state={true} username={userData.username}/>
       
     </div>
   )
