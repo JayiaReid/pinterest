@@ -16,6 +16,7 @@ import { toast } from '@/hooks/use-toast'
 const Page = () => {
   const { isLoaded, user } = useUser()
   const [url, setUrl]=useState('')
+  const [filled, setFilled] = useState(false)
   const [data, setData] = useState({
     firstName: '',
     lastName: '',
@@ -30,9 +31,9 @@ const Page = () => {
     lastName: '',
     about: '',
     website: '',
-    username: 'Default123',
+    username: '',
     email: '',
-    photo: '/pp.jpeg',
+    photo: '',
   })
   const [isDataEqual, setIsDataEqual] = useState(true)
 
@@ -68,6 +69,7 @@ const Page = () => {
             username: res.data?.username || user.id,
             photo: res.data?.photo
           }))
+          setFilled(true)
         }
       } catch (error) {
         console.error('Error fetching user data:', error)

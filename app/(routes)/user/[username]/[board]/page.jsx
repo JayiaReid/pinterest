@@ -30,7 +30,7 @@ const page = () => {
               throw new Error('Network response was not ok')
           }
           const res = await response.json()
-          // console.log(res)
+          console.log(res.data)
 
           if (res.success) {
             setData(res.data)

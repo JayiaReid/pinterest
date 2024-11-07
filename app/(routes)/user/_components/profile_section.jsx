@@ -1,6 +1,7 @@
 "use client"
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Button } from '@/components/ui/button'
+import { Skeleton } from '@/components/ui/skeleton'
 import { useUser } from '@clerk/nextjs'
 import { DotIcon, Globe } from 'lucide-react'
 import Image from 'next/image'
@@ -12,16 +13,8 @@ const Profile_section = ({ state }) => {
 
     const router = useRouter()
     const { user, isLoaded } = useUser()
-    const [data, setData] = useState({
-        firstName: '',
-        lastName: '',
-        about: '',
-        website: '',
-        username: 'Default123',
-        photo: '/pp.jpeg',
-        followersNum: 0,
-        followingNum: 0
-    })
+    const [data, setData] = useState({})
+    const [filled, setFilled] = useState(false)
 
     const fetchUserProfile = async () => {
         if (user) {
@@ -35,17 +28,8 @@ const Profile_section = ({ state }) => {
                 const res = await response.json()
 
                 if (res.success) {
-                    setData((prevData) => ({
-                        ...prevData,
-                        firstName: res.data?.firstName || user.firstName,
-                        lastName: res.data?.lastName || user.lastName,
-                        about: res.data?.about || '',
-                        website: res.data?.website || 'test',
-                        username: res.data?.username || user.id,
-                        photo: res.data?.photo,
-                        followersNum: res.data?.followersNum || 0,
-                        followingNum: res.data?.followingNum || 0
-                    }))
+                    setData(res.data)
+                    setFilled(true)
                 }
             } catch (error) {
 
@@ -61,7 +45,7 @@ const Profile_section = ({ state }) => {
 
     return (
         <div className='bg-background mt-5 h-1/2'>
-            <div className="flex flex-col gap-5 items-center justify-center">
+            {filled? <div className="flex flex-col gap-5 items-center justify-center">
                 <div className="w-[150px] h-[150px] flex items-center justify-center">
                     <Avatar className="w-full h-full">
                         <AvatarImage
@@ -70,12 +54,11 @@ const Profile_section = ({ state }) => {
                             className="object-cover rounded-full"
                             width={150}
                             height={150}
-                        // style={{ objectFit: 'cover' }}
                         />
-                        <AvatarFallback>CN</AvatarFallback>
+                        <AvatarFallback></AvatarFallback>
                     </Avatar>
                 </div>
-                <h2 className="text-4xl font-semibold text-foreground">{data.firstName} {data.lastName}</h2>
+                <h2 className="text-4xl font-semibold text-foreground">{data.firstName} {data?.lastName}</h2>
                 <h2 className="text-md font-extralight text-foreground flex">{data.website && <span className='flex gap-1 font-semibold'><Globe size={20} /> <Link href={data.website}>{data.website}</Link> <DotIcon /></span>}  {data.about}</h2>
                 <div className="flex items-center gap-1">
                     <Image src={'/pin_code.png'} height={15} width={15} />
@@ -87,10 +70,19 @@ const Profile_section = ({ state }) => {
                     <Button onClick={() => router.push(`/settings/profile`)} variant="muted" size={30} className=" bg-muted text-lg text-foreground p-3 rounded-3xl shadow-none">Edit Profile</Button>
                 </div>
                 <div className="flex gap-5 mt-5">
-                    <h2 onClick={() => router.push(`/user/${user.id}/created`)} className={`${!state ? " border-b-2 border-b-black" : "hover:bg-muted hover:rounded-xl cursor-pointer"} text-lg duration-300  p-2`}>Created</h2>
-                    <h2 onClick={() => router.push(`/user/${user.id}/saved`)} className={`${state ? "border-b-2 border-b-black" : "hover:bg-muted hover:rounded-xl cursor-pointer"} text-lg duration-300 p-2`}>Saved</h2>
+                    <h2 onClick={() => router.push(`/user/${data.username}/created`)} className={`${!state ? " border-b-2 border-b-black" : "hover:bg-muted hover:rounded-xl cursor-pointer"} text-lg duration-300  p-2`}>Created</h2>
+                    <h2 onClick={() => router.push(`/user/${data.username}/saved`)} className={`${state ? "border-b-2 border-b-black" : "hover:bg-muted hover:rounded-xl cursor-pointer"} text-lg duration-300 p-2`}>Saved</h2>
                 </div>
-            </div>
+            </div> : <div className="flex flex-col gap-5 items-center justify-center">
+                <Skeleton className="w-[150px] h-[150px] bg-muted rounded-full"/>
+                    
+                <Skeleton className="bg-muted h-[40px] w-1/2 rounded-xl"/>
+                <Skeleton className="bg-muted h-[30px] w-1/2 rounded-xl"/>
+                <Skeleton className="bg-muted h-[25px] w-1/2 rounded-xl"/>
+                <Skeleton className="bg-muted h-[25px] w-1/2 rounded-xl"/>
+                <Skeleton className="bg-muted h-[35px] w-1/2 rounded-xl"/>
+                
+            </div>}
 
         </div>
     )

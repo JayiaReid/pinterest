@@ -10,6 +10,7 @@ import Pin from '../(routes)/pins/_components/Pin'
 import Link from 'next/link'
 import { useUser } from '@clerk/nextjs'
 import { useRouter } from 'next/navigation'
+import { Skeleton } from '@/components/ui/skeleton'
 
 
 const Home_user = () => {
@@ -17,6 +18,7 @@ const Home_user = () => {
   const router = useRouter()
   const [userData, setUserData] = React.useState({})
   const [pins, setPins] = React.useState([])
+  const [filled, setFilled] = React.useState(false)
 
   const fetchPins = async ()=>{
     try {
@@ -30,7 +32,9 @@ const Home_user = () => {
       if(response.ok){
         const res = await response.json()
         setPins(res.data)
+        setFilled(true)
       }
+      
     } catch (error) {
       console.log(error)
     }
@@ -76,7 +80,9 @@ const Home_user = () => {
         }else if(response.status == 200){
           const res = await response.json()
           setUserData(res.data)
-          console.log('found', res.data)
+          // console.log('found', res.data)
+          setFilled(true)
+
         }
       } catch (error) {
         console.error('Error checking or creating user:', error)
@@ -87,7 +93,8 @@ const Home_user = () => {
   useEffect(()=>{
     if (isLoaded) {
       checkUser();
-      fetchPins()
+      fetchPins();
+      
     }
   }, [user, isLoaded])
 
@@ -117,45 +124,13 @@ const Home_user = () => {
     return colors[Math.floor(Math.random() * colors.length)]
   }
 
-  // const pins = [
-  //   { image: "/a0.jpg", user: "user_2nJ9SYAXcPeU6OghO7vvBRTg4Li" },
-  //   { image: "/a1.jpg", user: "user_2nJ9SYAXcPeU6OghO7vvBRTg4Li" },
-  //   { image: "/a2.jpg", user: "user_2nJ9SYAXcPeU6OghO7vvBRTg4Li" },
-  //   { image: "/a3.jpg", user: "user_2nJ9SYAXcPeU6OghO7vvBRTg4Li" },
-  //   { image: "/a4.jpg", user: "user_2nJ9SYAXcPeU6OghO7vvBRTg4Li" },
-  //   { image: "/a5.jpg", user: "user_2nJ9SYAXcPeU6OghO7vvBRTg4Li" },
-  //   { image: "/a6.jpg", user: "user_2nJ9SYAXcPeU6OghO7vvBRTg4Li" },
-  //   { image: "/a7.jpg", user: "user_2nJ9SYAXcPeU6OghO7vvBRTg4Li" },
-  //   { image: "/a8.jpg", user: "user_2nJ9SYAXcPeU6OghO7vvBRTg4Li" },
-  //   { image: "/a9.jpg", user: "user_2nJ9SYAXcPeU6OghO7vvBRTg4Li" },
-  //   { image: "/a10.jpg", user: "user_2nJ9SYAXcPeU6OghO7vvBRTg4Li" },
-  //   { image: "/a11.jpg", user: "user_2nJ9SYAXcPeU6OghO7vvBRTg4Li" },
-  //   { image: "/a12.jpg", user: "user_2nJ9SYAXcPeU6OghO7vvBRTg4Li" },
-  //   { image: "/a13.jpg", user: "user_2nJ9SYAXcPeU6OghO7vvBRTg4Li" },
-  //   { image: "/a14.jpg", user: "user_2nJ9SYAXcPeU6OghO7vvBRTg4Li" },
-  //   { image: "/a15.jpg", user: "user_2nJ9SYAXcPeU6OghO7vvBRTg4Li" },
-  //   { image: "/a16.jpg", user: "user_2nJ9SYAXcPeU6OghO7vvBRTg4Li" },
-  //   { image: "/a17.jpg", user: "user_2nJ9SYAXcPeU6OghO7vvBRTg4Li" },
-  //   { image: "/a18.jpg", user: "user_2nJ9SYAXcPeU6OghO7vvBRTg4Li" },
-  //   { image: "/a19.jpg", user: "user_2nJ9SYAXcPeU6OghO7vvBRTg4Li" },
-  //   { image: "/a20.jpg", user: "user_2nJ9SYAXcPeU6OghO7vvBRTg4Li" },
-  //   { image: "/a21.jpg", user: "user_2nJ9SYAXcPeU6OghO7vvBRTg4Li" },
-  //   { image: "/a22.jpg", user: "user_2nJ9SYAXcPeU6OghO7vvBRTg4Li" },
-  //   { image: "/a23.jpg", user: "user_2nJ9SYAXcPeU6OghO7vvBRTg4Li" },
-  //   { image: "/a24.jpg", user: "user_2nJ9SYAXcPeU6OghO7vvBRTg4Li" },
-  //   { image: "/a25.jpg", user: "user_2nJ9SYAXcPeU6OghO7vvBRTg4Li" },
-  //   { image: "/a26.jpg", user: "user_2nJ9SYAXcPeU6OghO7vvBRTg4Li" },
-  //   { image: "/a27.jpg", user: "user_2nJ9SYAXcPeU6OghO7vvBRTg4Li" },
-  //   { image: "/a28.jpg", user: "user_2nJ9SYAXcPeU6OghO7vvBRTg4Li" },
-  // ]
-
 
   return (
     <div className='bg-background'>
       {/* <PinterestHeader /> */}
 
       <Carousel opts={{ align: "start" }} className="mx-20 mt-5 p-5 max-w-[90%]">
-        <CarouselContent className=" w-[500px] flex gap-4">
+        {filled? <CarouselContent className=" w-[500px] flex gap-4">
           {userData.boards?.map((section, index) => (
             <CarouselItem key={index} className="basis-1/2">
               <Card className="border-none shadow-none bg-muted" style={{ backgroundColor: getRandomColor() }}>
@@ -172,12 +147,27 @@ const Home_user = () => {
               </Card>
             </CarouselItem>
           ))}
-        </CarouselContent>
+        </CarouselContent>: <CarouselContent className=" w-[500px] flex gap-4">
+        <Skeleton className="basis-1/2 h-[100px] rounded-xl bg-muted ml-5"/>
+              {/* <Card className="border-none shadow-none bg-muted" style={{ backgroundColor: getRandomColor() }}>
+                <CardContent className="h-[100px] flex gap-5 p-5 items-center justify-start">
+                  <div className="object-cover hover:border-transparent cursor-pointer border-white border-2 rounded-xl">
+                    <Link href={{pathname: `user/${userData.username}/${section.title}/more_ideas`, query: {board_id: section._id}}}><Image className="rounded-xl max-h-[70px] max-w-[70px] object-cover " src={section.cover} width={50} height={50} /></Link>
+                  </div>
+                  <div className="flex flex-col ">
+                    <h2 className="font-light text-md">More ideas for</h2>
+                    <h2 className="font-bold text-xl truncate-2-lines">{section.title}</h2>
+                  </div>
+
+                </CardContent>
+              </Card>
+            </CarouselItem> */}
+        </CarouselContent>}
         <CarouselPrevious className=" shadow-none border-none text-gray-700 text-xl cursor-pointer" />
         <CarouselNext className="shadow-none border-none text-gray-700 text-xl cursor-pointer" />
       </Carousel>
 
-      <div className="columns-[240px] gap-4 p-4 pb-20">
+      {filled? <div className="columns-[240px] gap-4 p-4 pb-20">
         {pins.map((pin, index) => (
           <div className="p-5">
             <Pin key={index} className="rounded-2xl" pin={pin} />
@@ -186,7 +176,10 @@ const Home_user = () => {
 
         ))}
 
-      </div>
+      </div>: <div className=" p-4 pb-20 h-auto">
+        <Skeleton className='bg-muted rounded-2xl ml-5 p-5 my-5 w-[250px] h-[300px]'/>
+
+      </div>}
       <Create state={true} username={userData.username}/>
       
     </div>

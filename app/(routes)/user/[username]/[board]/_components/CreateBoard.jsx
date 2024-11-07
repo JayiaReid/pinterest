@@ -34,7 +34,7 @@ const Create = () => {
                     throw new Error('Network response was not ok')
                 }
                 const res = await response.json()
-                console.log(res.data)
+                // console.log(res.data)
                 if (res.success) {
                     setUsername(res.data.username)
                     setUser_id(res.data._id)
@@ -69,7 +69,7 @@ const Create = () => {
                 body: JSON.stringify(Info),
             })
 
-            console.log(response)
+            // console.log(response)
             
             if (response.ok) {
                 router.push(`/user/${username}/${title}`)

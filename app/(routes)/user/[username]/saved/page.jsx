@@ -8,6 +8,7 @@ import Board from '../[board]/_components/Board'
 import Create from '../[board]/_components/CreateBoard'
 import { Button } from '@/components/ui/button'
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
+import { Skeleton } from '@/components/ui/skeleton'
 
 const page = () => {
   const [active, setActive]=React.useState(false)
@@ -15,6 +16,7 @@ const page = () => {
   const {user, isLoaded}=useUser()
   const [boards, setBoards]=React.useState([])
   const [username, setUsername] = React.useState('')
+  const [filled, setFilled]=React.useState(false)
 
 const fetchUserProfile = async () => {
     if (user) {
@@ -31,6 +33,7 @@ const fetchUserProfile = async () => {
               setBoards(res.data.boards)
                 setUsername(res.data.username)
             }
+            setFilled(true)
         } catch (error) {
 
         }
@@ -49,7 +52,7 @@ useEffect(() => {
   }
 }, [user, isLoaded])
 
-  if (!isLoaded) return <div className="flex items-center justify-center absolute h-screen bg-white w-screen top-0 left-0">
+  if (!isLoaded || !filled) return <div className="flex items-center justify-center absolute h-screen bg-white w-screen top-0 left-0">
   <div className='loader'></div>
 </div>
 
@@ -80,11 +83,15 @@ useEffect(() => {
         
         <Create />
       </div>
-      <div className=' grid grid-cols-2 xl:grid-cols-5 lg:grid-cols-4 md:grid-cols-3 sm:grid-cols-2'>
+      {filled? <div className=' grid grid-cols-2 xl:grid-cols-5 lg:grid-cols-4 md:grid-cols-3 sm:grid-cols-2'>
         {getSortedBoards().map((board, index) => (
           <Board key={index} board={board} user={username} />
         ))}
-      </div>
+      </div>: <div className='p-5 grid grid-cols-2 xl:grid-cols-5 lg:grid-cols-4 md:grid-cols-3 sm:grid-cols-2'>
+        <Skeleton className='h-[200px] w-[250px] bg-muted rounded-xl p-5'/>
+        <Skeleton className='h-[200px] w-[250px] bg-muted rounded-xl p-5'/>
+        <Skeleton className='h-[200px] w-[250px] bg-muted rounded-xl p-5'/>
+        </div>}
 
       {/* <Nopins state={true}/> */}
     </div>

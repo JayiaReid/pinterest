@@ -19,6 +19,7 @@ const Page = () => {
   const router = useRouter()
   const [showComments, setShowComments] = React.useState(false)
   const [pin, setPin] = React.useState({})
+  const [pins, setPins] = React.useState([])
   const [liked, setLiked] = React.useState(false)
   // const [liked, setLiked] = React.useState(false)
   const [comment, setComment] = React.useState({
@@ -47,6 +48,13 @@ const Page = () => {
 
         // check if liked
         setLiked(pin[0].likes.some(like => like.user === user_id))
+
+        // find similar pins
+        const restPins = res.data.filter(pin=> pin._id != id)
+        const similarPins = restPins.filter((item) => 
+          item.keywords && item.keywords.some(keyword => pin[0].keywords.includes(keyword))
+        ).slice(0, 20)
+        setPins(similarPins)
       }
     } catch (error) {
       console.log(error)
@@ -127,16 +135,6 @@ const Page = () => {
     setComment({ ...comment, content: "" })
 
   }
-
-  const pins = [
-    { image: "/a0.jpg", user: "user_2nJ9SYAXcPeU6OghO7vvBRTg4Li" },
-    { image: "/a1.jpg", user: "user_2nJ9SYAXcPeU6OghO7vvBRTg4Li" },
-    { image: "/a2.jpg", user: "user_2nJ9SYAXcPeU6OghO7vvBRTg4Li" },
-    { image: "/a3.jpg", user: "user_2nJ9SYAXcPeU6OghO7vvBRTg4Li" },
-    { image: "/a4.jpg", user: "user_2nJ9SYAXcPeU6OghO7vvBRTg4Li" },
-    { image: "/a5.jpg", user: "user_2nJ9SYAXcPeU6OghO7vvBRTg4Li" },
-    { image: "/a6.jpg", user: "user_2nJ9SYAXcPeU6OghO7vvBRTg4Li" },
-    { image: "/a7.jpg", user: "user_2nJ9SYAXcPeU6OghO7vvBRTg4Li" }]
 
     useEffect(()=>{
       if(isLoaded){
