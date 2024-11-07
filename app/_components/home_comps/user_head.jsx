@@ -108,7 +108,7 @@ useEffect(() => {
         />
       </div>
       <div className="hover:bg-muted bg-transparent p-3 rounded-full duration-300 cursor-pointer">
-        <Link href={`/user/${username}/saved`} className=" w-[40px] max-w-[70px] h-[40px] flex items-center justify-center">
+        <Link href={username? `/user/${username}/saved`: '/settings/profile'} className=" w-[40px] max-w-[70px] h-[40px] flex items-center justify-center">
           <Avatar className="w-full h-full">
             <AvatarImage
               src={photo}
