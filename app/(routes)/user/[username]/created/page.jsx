@@ -57,7 +57,7 @@ const page = () => {
             </div>: <Nopins/>}
         </div>}
         
-        <Create state={true}/>
+        <Create state={true} username={username}/>
     </div>
   )
 }

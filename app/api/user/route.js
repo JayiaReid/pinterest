@@ -1,10 +1,11 @@
 import PinterestDB from '@/lib/database'
 import user_profile from '@/models/user_profile'
+import user_board from '@/models/user_board'
 
 export async function GET(req) {
   const { searchParams } = new URL(req.url)
   const email = searchParams.get('email')
-  
+
   try {
     await PinterestDB()
     const user = await user_profile.findOne({ email }).populate('boards')
