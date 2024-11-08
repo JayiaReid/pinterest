@@ -1,6 +1,9 @@
 import PinterestDB from "@/lib/database";
 import Pin from "@/models/Pin";
 import user_profile from "@/models/user_profile";
+import Like from "@/models/Like";
+import Comment from "@/models/Comment";
+
 
 export async function POST(req, res){
     await PinterestDB()

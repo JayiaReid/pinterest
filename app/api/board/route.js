@@ -1,6 +1,8 @@
 import PinterestDB from "@/lib/database"
 import user_board from "@/models/user_board"
 import user_profile from "@/models/user_profile"
+import Section from "@/models/Section"
+import Pin from "@/models/Pin"
 
 // reconfigue the models again
 
