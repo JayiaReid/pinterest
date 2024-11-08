@@ -4,10 +4,9 @@ import user_profile from '@/models/user_profile'
 export async function GET(req) {
   const { searchParams } = new URL(req.url)
   const email = searchParams.get('email')
-
-  await PinterestDB()
-
+  
   try {
+    await PinterestDB()
     const user = await user_profile.findOne({ email }).populate('boards')
     if (!user) {
       return new Response(JSON.stringify({ success: false, message: 'User profile not found' }), {
