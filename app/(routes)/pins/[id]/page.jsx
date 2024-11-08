@@ -15,7 +15,7 @@ import Pin_map from '@/app/_components/global_comps/pin_map'
 const Page = () => {
 
   const { id } = useParams()
-  const { isLoaded } = useUser()
+  const { isLoaded, user } = useUser()
   const router = useRouter()
   const [showComments, setShowComments] = React.useState(false)
   const [pin, setPin] = React.useState({})
@@ -27,6 +27,25 @@ const Page = () => {
     user: "",
     content: ""
   })
+
+  const getUser = async ()=>{
+    const email = user?.emailAddresses[0].emailAddress
+    try {
+      const response = await fetch(`/api/user?email=${email}`, {
+        method: 'GET', 
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      })
+
+      if(response.ok){
+        const res = await response.json()
+        return res.data
+      }
+    } catch (error) {
+      console.log(error)
+    }
+  }
 
   const fetchPins = async ()=>{
     try {
@@ -42,11 +61,12 @@ const Page = () => {
         const pin = res.data.filter(pin=> pin._id == id)
         setPin(pin[0])
         console.log(pin[0])
-        const user_id = pin[0].user._id
-        const user = pin[0].user.username
-        setComment((prevData) => ({ ...prevData, user, user_id}))
+        const user = await getUser()
+        const username = user.username
+        const user_id = user._id
 
-        // check if liked
+        setComment((prevData) => ({ ...prevData, username, user_id}))
+
         setLiked(pin[0].likes.some(like => like.user === user_id))
 
         // find similar pins
