@@ -29,7 +29,6 @@ const Create = ({ state, username }) => {
     const addPin = async () => {
 
         if(user){
-            console.log('upload')
             const response = await fetch(`/api/upload?filename=${files.name}`, {
                 method: 'POST',
                 body: files,
@@ -55,7 +54,6 @@ const Create = ({ state, username }) => {
                     body: JSON.stringify(pinData),
                 })
 
-                console.log('3')
                 console.log(response)
                 if (response.ok) {
                     console.log('success')

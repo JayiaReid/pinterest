@@ -45,7 +45,6 @@ export async function GET(req){
     try {
         const pins = await Pin.find()
         .populate('user')
-        .populate('likes')
         .populate({
             path: 'comments',
             populate: {

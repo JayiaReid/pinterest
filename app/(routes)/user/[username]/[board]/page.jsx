@@ -34,8 +34,21 @@ const page = () => {
 
           if (res.success) {
             setData(res.data)
-            setPins(res.data.pins.length)
+
+            let numOfPins = res.data.pins.length
+
+            res.data.sections.forEach(section => {
+              if(section.pins.length>0){
+                numOfPins += section.pins.length
+              }
+            })
+
+            setPins(numOfPins)
+
+
           }
+
+
       } catch (error) {
 
       }
@@ -47,19 +60,6 @@ const page = () => {
       fetchData()
     }
   }, [user, isLoaded])
-
-  const sections = [
-    { user: "user_2nJ9SYAXcPeU6OghO7vvBRTg4Li", board: "photography", images: [{ url: '/a7.jpg' }, { url: '/a2.jpg' }, { url: '/a4.jpg' }], title: "Travel Ideas", image: "/board1.jpg", pins: 25 },
-    { user: "user_2nJ9SYAXcPeU6OghO7vvBRTg4Li", board: "photography", images: [{ url: '/a7.jpg' }, { url: '/a2.jpg' }, { url: '/a4.jpg' }], title: "Art", image: "/board2.jpg", pins: 40 },
-    { user: "user_2nJ9SYAXcPeU6OghO7vvBRTg4Li", board: "photography", images: [{ url: '/a7.jpg' }, { url: '/a2.jpg' }, { url: '/a4.jpg' }], title: "Photography", image: "/board3.jpg", pins: 18 },
-    // { user: "user_2nJ9SYAXcPeU6OghO7vvBRTg4Li", board: "photography", images: [{ url: '/a7.jpg' }, { url: '/a2.jpg' }, { url: '/a4.jpg' }], title: "DIY Projects", image: "/board4.jpg", pins: 10 },
-    // { user: "user_2nJ9SYAXcPeU6OghO7vvBRTg4Li", board: "photography", images: [{ url: '/a7.jpg' }, { url: '/a2.jpg' }, { url: '/a4.jpg' }], title: "Travel Ideas", image: "/board1.jpg", pins: 25 },
-    // { user: "user_2nJ9SYAXcPeU6OghO7vvBRTg4Li", board: "photography", images: [{ url: '/a7.jpg' }, { url: '/a2.jpg' }, { url: '/a4.jpg' }], title: "Art", image: "/board2.jpg", pins: 40 },
-    // { user: "user_2nJ9SYAXcPeU6OghO7vvBRTg4Li", board: "photography", images: [{ url: '/a7.jpg' }, { url: '/a2.jpg' }, { url: '/a4.jpg' }], title: "Photography", image: "/board3.jpg", pins: 18 },
-    // { user: "user_2nJ9SYAXcPeU6OghO7vvBRTg4Li", board: "photography", images: [{ url: '/a7.jpg' }, { url: '/a2.jpg' }, { url: '/a4.jpg' }], title: "DIY Projects", image: "/board4.jpg", pins: 10 },
-
-    // Add more boards as needed
-  ]
 
   
   const handleReorder = (newPins) => {

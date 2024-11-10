@@ -11,6 +11,7 @@ import { useParams, useRouter } from 'next/navigation'
 import React, { useEffect } from 'react'
 import Pin from '../_components/Pin'
 import Pin_map from '@/app/_components/global_comps/pin_map'
+import Save from '../_components/Save'
 
 const Page = () => {
 
@@ -21,7 +22,7 @@ const Page = () => {
   const [pin, setPin] = React.useState({})
   const [pins, setPins] = React.useState([])
   const [liked, setLiked] = React.useState(false)
-  // const [liked, setLiked] = React.useState(false)
+  const [userData, setUser] = React.useState({})
   const [comment, setComment] = React.useState({
     user_id: "",
     user: "",
@@ -40,6 +41,7 @@ const Page = () => {
 
       if(response.ok){
         const res = await response.json()
+        // console.log(res.data)
         return res.data
       }
     } catch (error) {
@@ -60,14 +62,14 @@ const Page = () => {
         const res = await response.json()
         const pin = res.data.filter(pin=> pin._id == id)
         setPin(pin[0])
-        console.log(pin[0])
         const user = await getUser()
+        setUser(user)
         const username = user.username
         const user_id = user._id
 
         setComment((prevData) => ({ ...prevData, username, user_id}))
 
-        setLiked(pin[0].likes.some(like => like.user === user_id))
+        setLiked(pin[0].likes.some(like => like === user_id))
 
         // find similar pins
         const restPins = res.data.filter(pin=> pin._id != id)
@@ -174,7 +176,7 @@ const Page = () => {
       <div className='flex mx-5 my-10 items-center w-full h-full justify-center'>
         <Card className="rounded-3xl shadow-lg border-none">
           <CardContent className="m-0 p-0 flex flex-col md:flex-row lg-flex-row xl:flex-row">
-            <Image className="rounded-2xl" src={pin?.image} width={500} height={400} alt="Pin" />
+            <Image className="rounded-2xl object-cover" src={pin?.image} width={500} height={400} alt="Pin" />
             <div className='p-8 flex flex-col gap-8'>
               <div className='flex items-center justify-between'>
                 <div className='flex gap-5'>
@@ -185,7 +187,7 @@ const Page = () => {
                   <Share strokeWidth={3} size={20} />
                   <Download strokeWidth={3} size={20}/>
                 </div>
-                <Button size={30} className="bg-primary text-white self-end text-lg px-4 py-2 rounded-3xl shadow-none">Save</Button>
+                <Save user={userData} pin={id}/>
               </div>
               <h2 className='text-2xl font-semibold'>{pin?.title}</h2>
               <h2>{pin?.description}</h2>
@@ -251,7 +253,7 @@ const Page = () => {
       </div>
       <div>
         <h2 className='text-center font-bold text-xl'>More to explore</h2>
-        <Pin_map pins={pins}/>
+        <Pin_map pins={pins} user={userData}/>
       </div>
 
     </div>

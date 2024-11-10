@@ -17,6 +17,7 @@ const Page = () => {
   const { isLoaded, user } = useUser()
   const [url, setUrl]=useState('')
   const [filled, setFilled] = useState(false)
+  const [same, setSame] = React.useState(false)
   const [data, setData] = useState({
     firstName: '',
     lastName: '',
@@ -118,21 +119,24 @@ const Page = () => {
       },
       body: JSON.stringify(data),
     })
-  
-    const result = await response.json()
-    if (result.success) {
-      // toast
+    console.log(response)
+const result = response.json()
+    if (response.ok) {
+      setSame(false)
       toast({
         title: "Profile updated successfully", 
         description: result.message
       })
       fetchUserProfile()
-    } else {
-      toast({
+  }else if(response.status == 401){
+      setSame(true)
+  }else{
+    toast({
         title: "Error updating profile", 
         description: result.message
       })
-    }
+  }
+  
   }
 
 
@@ -261,7 +265,7 @@ const Page = () => {
             value={data.username}
             className="w-full shadow-none rounded-xl border-muted-foreground text-md p-5 focus:outline-muted"
           />
-          <h2 className='text-sm text-muted-foreground'>www.pinterest.com/{data.username ? data.username : user?.username}</h2>
+          {same?<h2 className='text-sm  text-primary'>username taken</h2> :<h2 className='text-sm text-muted-foreground'>www.pinterest.com/{data.username ? data.username : user?.username}</h2>}
         </div>
         <div className='flex flex-col font-semibold gap-5 p-2 rounded-xl'>
           <div className='flex justify-between'>

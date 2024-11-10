@@ -1,6 +1,7 @@
 import PinterestDB from '@/lib/database'
 import user_profile from '@/models/user_profile'
 import user_board from '@/models/user_board'
+import Section from '@/models/Section'
 
 export async function GET(req) {
   const { searchParams } = new URL(req.url)
@@ -8,7 +9,17 @@ export async function GET(req) {
 
   try {
     await PinterestDB()
-    const user = await user_profile.findOne({ email }).populate('boards')
+    const user = await user_profile.findOne({ email }).populate({
+      path: 'boards',
+      populate: {
+      path: 'sections'
+      }
+  }).populate({
+    path: "boards",
+    populate:{
+      path: 'pins'
+    }
+  })
     if (!user) {
       return new Response(JSON.stringify({ success: false, message: 'User profile not found' }), {
         status: 404,
@@ -35,6 +46,7 @@ export async function POST(req, res) {
   try {
     const body = await req.json()
     // console.log(body)
+    
 
     const newUser = new user_profile({
       firstName: body.firstName,
@@ -83,6 +95,20 @@ export async function PUT(req) {
         headers: { 'Content-Type': 'application/json' },
       })
     }
+
+    const existingUser = await user_profile.findOne({ 
+      username: body.username 
+  })
+
+  if (existingUser) {
+      return new Response(JSON.stringify({ 
+          success: false, 
+          message: 'Username taken' 
+      }), {
+          status: 401,
+          headers: { 'Content-Type': 'application/json' },
+      })
+  }
 
     const result = await user_profile.updateOne(
       { email: email },

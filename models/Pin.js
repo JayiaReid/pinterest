@@ -6,7 +6,7 @@ const Pin = new mongoose.Schema({
     title: { type: String, required: true },
     description: { type: String, default: ''},
     comments: [{type: mongoose.SchemaTypes.ObjectId, ref: 'Comment', default: []}],
-    likes: [{type: mongoose.SchemaTypes.ObjectId, ref: 'Like', default: []}],
+    likes: [{type: mongoose.SchemaTypes.ObjectId, ref: 'user_profile', default: []}],
     keywords: [{type: String, default: []}],
     link: {type: String, default: ''},
     saves: [{type: mongoose.SchemaTypes.ObjectId, ref: 'Save', default: []}]

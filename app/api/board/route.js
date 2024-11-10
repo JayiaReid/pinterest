@@ -68,7 +68,13 @@ export async function GET(req) {
         const board = await user_board.findOne({ 
             user: user._id, 
             title: title 
-        }).populate(['sections', 'pins'])
+        }).populate('pins')
+        .populate({
+            path: 'sections',
+            populate: {
+            path: 'pins'
+            }
+        })
 
         if (!board) {
             return new Response(JSON.stringify({ 

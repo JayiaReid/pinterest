@@ -9,22 +9,14 @@ export async function POST(req) {
     try {
         const body = await req.json()
         const { user, pin } = body
-        console.log(body)
-
-        const newLike = new Like({
-            user,
-            pin
-        })
-
-        const savedLike = await newLike.save()
 
         const thisPin = await Pin.findById(pin)
 
-        thisPin.likes.push(savedLike._id)
+        thisPin.likes.push(user)
 
         await thisPin.save()
 
-        return new Response(JSON.stringify({ success: true, message: savedLike }), {
+        return new Response(JSON.stringify({ success: true, message: thisPin }), {
             status: 200,
             headers: { 'Content-Type': 'application/json' },
         })
@@ -47,15 +39,11 @@ export async function DELETE(req) {
 
         const { pin, user } = body
 
-        const thisLike = await Like.findOne({ pin, user })
-
         const thisPin = await Pin.findById(pin)
         
-        thisPin.likes = thisPin.likes.filter(like => like.toString() !==thisLike. _id)
+        thisPin.likes = thisPin.likes.filter(like => like.toString() !==user)
 
         await thisPin.save()
-
-        await Like.findOneAndDelete({ pin, user })
 
         return new Response(JSON.stringify({
             success: true,

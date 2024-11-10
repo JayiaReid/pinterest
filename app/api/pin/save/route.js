@@ -11,6 +11,7 @@ export async function PUT(req){
         const body = await req.json()
 
         const {pin, _id} = body
+        console.log(body)
 
         const thisPin = await Pin.findById(pin)
 
@@ -19,17 +20,31 @@ export async function PUT(req){
         if(destination){
             destination.pins.push(pin)
 
-            if (destination.pins.length <= 2) {
+            if (destination.pins.length <= 3) {
                 const firstPin = await Pin.findById(destination.pins[0]);
                 const secondPin = destination.pins[1] ? await Pin.findById(destination.pins[1]) : null;
+                const third = destination.pins[2] ? await Pin.findById(destination.pins[2]) : null
 
-                if (firstPin) {
-                    destination.images[0] = firstPin.image
+                if(destination.cover == '/blank.jpg'){
+                    if (firstPin) {
+                        destination.cover = firstPin.image
+                    }
+                    if (secondPin) {
+                        destination.images[0] = secondPin.image
+                    }
+                    if (third) {
+                        destination.images[1] = third.image
+                    }
+                }else{
+                    if (firstPin) {
+                        destination.images[0] = firstPin.image
+                    }
+    
+                    if (secondPin) {
+                        destination.images[1] = secondPin.image
+                    }
                 }
-
-                if (secondPin) {
-                    destination.images[1] = secondPin.image
-                }
+               
             }
         }else if(!destination){
             destination = await Section.findById(_id)

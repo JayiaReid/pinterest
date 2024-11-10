@@ -1,20 +1,20 @@
 import PinterestDB from "@/lib/database";
 import user_board from "@/models/user_board";
 import Pin from "@/models/Pin";
+import Like from "@/models/Like";
+import Comment from "@/models/Comment";
 import user_profile from "@/models/user_profile";
 
 export async function GET(req) {
     const { searchParams } = new URL(req.url)
-    const email = searchParams.get("email")
-    const title = searchParams.get("title")
+    const _id = searchParams.get("_id")
 
     await PinterestDB()
 
     try {
-        const user = await user_profile.findOne({ email })
 
         const board = await user_board
-            .findOne({ user: user._id, title })
+            .findById(_id)
             .populate({
                 path: "pins", 
                 select: "keywords",

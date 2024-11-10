@@ -1,23 +1,40 @@
 "use client"
 import Pin_map from '@/app/_components/global_comps/pin_map'
 import { useUser } from '@clerk/nextjs'
-import { ArrowLeft } from 'lucide-react'
-import { useRouter } from 'next/navigation'
-import React from 'react'
+import { ArrowLeft, User2 } from 'lucide-react'
+import { useRouter, useSearchParams } from 'next/navigation'
+import React, { useEffect } from 'react'
 
 const page = () => {
+  const { isLoaded, user } = useUser()
+  const [pins, setPins]=React.useState([])
+  const searchParams = useSearchParams()
+  const _id = searchParams.get('board_id')
+  
+  const fetchPins = async () => {
+    try {
+      const response = await fetch(`/api/more_ideas?_id=${_id}`, {
+        method: "GET",
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      })
 
-    const pins = [
-        { image: "/a0.jpg", user: "user_2nJ9SYAXcPeU6OghO7vvBRTg4Li" },
-        { image: "/a1.jpg", user: "user_2nJ9SYAXcPeU6OghO7vvBRTg4Li" },
-        { image: "/a2.jpg", user: "user_2nJ9SYAXcPeU6OghO7vvBRTg4Li" },
-        { image: "/a3.jpg", user: "user_2nJ9SYAXcPeU6OghO7vvBRTg4Li" },
-        { image: "/a4.jpg", user: "user_2nJ9SYAXcPeU6OghO7vvBRTg4Li" },
-        { image: "/a5.jpg", user: "user_2nJ9SYAXcPeU6OghO7vvBRTg4Li" },
-        { image: "/a6.jpg", user: "user_2nJ9SYAXcPeU6OghO7vvBRTg4Li" },
-        { image: "/a7.jpg", user: "user_2nJ9SYAXcPeU6OghO7vvBRTg4Li" }]
+      if (response.ok) {
+        const res = await response.json()
+        setPins(res.data.pins)
+      }
 
-    const { isLoaded } = useUser()
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+  useEffect(()=>{
+    fetchPins()
+  }, [user])
+
+   
   const router = useRouter()
 
 
