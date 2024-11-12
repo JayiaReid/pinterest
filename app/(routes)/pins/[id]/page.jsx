@@ -12,6 +12,7 @@ import React, { useEffect } from 'react'
 import Pin from '../_components/Pin'
 import Pin_map from '@/app/_components/global_comps/pin_map'
 import Save from '../_components/Save'
+import useDownloader from 'react-use-downloader'
 
 const Page = () => {
 
@@ -28,18 +29,20 @@ const Page = () => {
     user: "",
     content: ""
   })
+  const { download } = useDownloader()
+  const [following, setFollowing] = React.useState(false)
 
-  const getUser = async ()=>{
+  const getUser = async () => {
     const email = user?.emailAddresses[0].emailAddress
     try {
       const response = await fetch(`/api/user?email=${email}`, {
-        method: 'GET', 
+        method: 'GET',
         headers: {
           'Content-Type': 'application/json'
         }
       })
 
-      if(response.ok){
+      if (response.ok) {
         const res = await response.json()
         // console.log(res.data)
         return res.data
@@ -49,31 +52,41 @@ const Page = () => {
     }
   }
 
-  const fetchPins = async ()=>{
+  const checkFollowing = async (user) => {
+    const email = user?.emailAddresses[0].emailAddress
+
+    user.followers?.forEach(follower => {
+      if (follower.email == email) {
+        setFollowing(true)
+      }
+    })
+  }
+
+  const fetchPins = async () => {
     try {
-      const response = await fetch('/api/pin',{
+      const response = await fetch('/api/pin', {
         method: "GET",
         headers: {
           'Content-Type': 'application/json'
         }
       })
 
-      if(response.ok){
+      if (response.ok) {
         const res = await response.json()
-        const pin = res.data.filter(pin=> pin._id == id)
+        const pin = res.data.filter(pin => pin._id == id)
         setPin(pin[0])
         const user = await getUser()
         setUser(user)
         const username = user.username
         const user_id = user._id
 
-        setComment((prevData) => ({ ...prevData, username, user_id}))
-
+        setComment((prevData) => ({ ...prevData, username, user_id }))
+        checkFollowing(user)
         setLiked(pin[0].likes.some(like => like === user_id))
 
         // find similar pins
-        const restPins = res.data.filter(pin=> pin._id != id)
-        const similarPins = restPins.filter((item) => 
+        const restPins = res.data.filter(pin => pin._id != id)
+        const similarPins = restPins.filter((item) =>
           item.keywords && item.keywords.some(keyword => pin[0].keywords.includes(keyword))
         ).slice(0, 20)
         setPins(similarPins)
@@ -83,9 +96,9 @@ const Page = () => {
     }
   }
 
-  const likePin = async ()=>{
+  const likePin = async () => {
 
-    if(liked){
+    if (liked) {
       try {
         const response = await fetch('/api/pin/like', {
           method: "DELETE",
@@ -98,14 +111,14 @@ const Page = () => {
           })
         })
 
-        if(response.ok){
+        if (response.ok) {
           fetchPins();
           setLiked(false)
         }
       } catch (error) {
         console.log(error)
       }
-    }else{
+    } else {
       try {
         const response = await fetch('/api/pin/like', {
           method: "POST",
@@ -118,7 +131,7 @@ const Page = () => {
           })
         })
 
-        if(response.ok){
+        if (response.ok) {
           fetchPins();
           setLiked(true)
         }
@@ -147,7 +160,7 @@ const Page = () => {
         body: JSON.stringify(newComment)
       })
 
-      if(response.ok){
+      if (response.ok) {
         fetchPins();
       }
     } catch (error) {
@@ -158,20 +171,57 @@ const Page = () => {
 
   }
 
-    useEffect(()=>{
-      if(isLoaded){
+  const followUser = async (_id) => {
+
+    try {
+      const email = user.emailAddresses[0].emailAddress
+
+      if (!following) {
+        const response = await fetch('/api/users', {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ op: true, email, _id }),
+        })
+        console.log(response)
+
+        setFollowing(true)
+        fetchPins()
+      } else {
+        const response = await fetch('/api/users', {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ op: false, email, _id }),
+        })
+        console.log(response)
+
+        setFollowing(false)
         fetchPins()
       }
-    }, [isLoaded])
+    } catch (error) {
+      console.log(error)
+    }
 
-    if (!isLoaded) return <div className="flex items-center justify-center absolute h-screen bg-white w-screen top-0 left-0">
+
+  }
+
+  useEffect(() => {
+    if (isLoaded) {
+      fetchPins()
+    }
+  }, [isLoaded])
+
+  if (!isLoaded) return <div className="flex items-center justify-center absolute h-screen bg-white w-screen top-0 left-0">
     <div className='loader'></div>
   </div>
 
   return (
     <div className='mt-10'>
       <div className='absolute cursor-pointer hover:bg-muted rounded-full p-2 ml-5'>
-        <ArrowLeft size={30} strokeWidth={2.5} onClick={()=>router.back()}/>
+        <ArrowLeft size={30} strokeWidth={2.5} onClick={() => router.back()} />
       </div>
       <div className='flex mx-5 my-10 items-center w-full h-full justify-center'>
         <Card className="rounded-3xl shadow-lg border-none">
@@ -181,23 +231,23 @@ const Page = () => {
               <div className='flex items-center justify-between'>
                 <div className='flex gap-5'>
                   <div className='flex gap-2'>
-                    <HeartIcon className='cursor-pointer' onClick={() => likePin()}strokeWidth={`${pin.liked? 0 : 3}`} size={20} fill={`${liked? 'red' : 'transparent'}`}/>
+                    <HeartIcon className='cursor-pointer' onClick={() => likePin()} strokeWidth={`${pin.liked ? 0 : 3}`} size={20} fill={`${liked ? 'red' : 'transparent'}`} />
                     <h2>{pin.likes?.length}</h2>
                   </div>
-                  <Share strokeWidth={3} size={20} />
-                  <Download strokeWidth={3} size={20}/>
+                  <Share className='cursor-pointer' strokeWidth={3} size={20} />
+                  <Download className='cursor-pointer' onClick={() => download(pin?.image, `${pin?.title}.jpg`)} strokeWidth={3} size={20} />
                 </div>
-                <Save user={userData} pin={id}/>
+                <Save user={userData} pin={id} />
               </div>
               <h2 className='text-2xl font-semibold'>{pin?.title}</h2>
               <h2>{pin?.description}</h2>
-              {pin.link && <Link href={pin?.link} className='font-bold'>{pin?.link }</Link>}
+              {pin.link && <Link href={pin?.link} className='font-bold'>{pin?.link}</Link>}
 
               <div className='flex items-center justify-between'>
-                <Link href={`/user/${pin.user?.username}/created`} className="flex items-center gap-2">
+                <Link href={`/${pin.user?.username}/`} className="flex items-center gap-2">
                   <Avatar className="w-[40px] max-w-[70px] h-[40px]">
                     <AvatarImage
-                      src="/pp.jpeg"
+                      src={userData.photo}
                       alt="profile picture"
                       className="object-cover rounded-full"
                       width={5}
@@ -210,7 +260,7 @@ const Page = () => {
                     <h2 className="text-sm">{pin.user?.followersNum} followers</h2>
                   </div>
                 </Link>
-                <Button variant="outline" size={30} className=" text-foreground self-end text-lg px-4 py-2 rounded-3xl shadow-none">Follow</Button>
+                <Button onClick={()=>followUser(userData._id)} variant="outline" size={30} className=" text-foreground self-end text-lg px-4 py-2 rounded-3xl shadow-none">Follow</Button>
               </div>
 
               <div className='flex flex-col gap-5'>
@@ -245,7 +295,7 @@ const Page = () => {
                   placeholder="Add a comment"
                   className="w-full border-2 p-5 text-lg bg-transparent rounded-full focus:outline-none focus:ring-2 focus:ring-[#767676]"
                 />
-               <Button variant="ouline" className="rounded-full p-1 border h-[30px]"><Check onClick={()=>{addComment(); setShowComments(true)}} className='cursor-pointer' strokeWidth={2} size={20} /></Button> 
+                <Button variant="ouline" className="rounded-full p-1 border h-[30px]"><Check onClick={() => { addComment(); setShowComments(true) }} className='cursor-pointer' strokeWidth={2} size={20} /></Button>
               </div>
             </div>
           </CardContent>
@@ -253,7 +303,7 @@ const Page = () => {
       </div>
       <div>
         <h2 className='text-center font-bold text-xl'>More to explore</h2>
-        <Pin_map pins={pins} user={userData}/>
+        <Pin_map pins={pins} user={userData} />
       </div>
 
     </div>

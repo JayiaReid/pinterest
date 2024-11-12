@@ -79,7 +79,7 @@ const Home_user = () => {
         } else if (response.status == 200) {
           const res = await response.json()
           setUserData(res.data)
-          console.log('found', res.data)
+          // console.log('found', res.data)
           setFilled(true)
 
         }

@@ -8,14 +8,16 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
 import { UserProfile } from '@clerk/clerk-react'
-import { Dialog, DialogContent, DialogHeader, DialogTrigger } from '@/components/ui/dialog'
+import { Dialog, DialogClose, DialogContent, DialogFooter, DialogHeader, DialogTrigger } from '@/components/ui/dialog'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import Image from 'next/image'
 import { toast } from '@/hooks/use-toast'
+import { Skeleton } from '@/components/ui/skeleton'
 
 const Page = () => {
   const { isLoaded, user } = useUser()
-  const [url, setUrl]=useState('')
+  const [url, setUrl] = useState('')
+  const [active, setActive]=useState(false)
   const [filled, setFilled] = useState(false)
   const [same, setSame] = React.useState(false)
   const [data, setData] = useState({
@@ -23,9 +25,9 @@ const Page = () => {
     lastName: '',
     about: '',
     website: '',
-    username: 'Default123',
+    username: '',
     email: '',
-    photo: '/pp.jpeg',
+    photo: '',
   })
   const [originalData, setOriginalData] = useState({
     firstName: '',
@@ -78,22 +80,16 @@ const Page = () => {
     }
   }
 
-  // eventually will fetch their pins
-  const images = [
-    "https://i.pinimg.com/564x/e9/85/57/e985573758839139632063c79f2c0ba8.jpg",
-    "https://i.pinimg.com/564x/46/ff/4b/46ff4b90b947ea842b8e20ae06f1a9e5.jpg",
-    "https://i.pinimg.com/564x/ac/8e/8d/ac8e8d643cc5d66dbe027bbfe2a28f10.jpg",
-    "https://i.pinimg.com/564x/38/78/60/387860e52aa35aab0306b2934b6d3a5d.jpg",
-    // "/b1.jpg",
-    "/b2.jpg",
-    "/b3.jpg",
-    "/b4.jpg",
-    // "/b5.jpg",
-    "/b6.jpg",
-    "/b7.jpg",
-    "/b8.jpg",
-  ]
 
+  const uploadImage = async (file) => {
+    const response = await fetch(`/api/upload?filename=${file.name}`, {
+        method: 'POST',
+        body: file,
+    })
+    const result = await response.json()
+    setUrl(result.url)
+
+}
 
   useEffect(() => {
     fetchUserProfile()
@@ -120,23 +116,23 @@ const Page = () => {
       body: JSON.stringify(data),
     })
     console.log(response)
-const result = response.json()
+    const result = response.json()
     if (response.ok) {
       setSame(false)
       toast({
-        title: "Profile updated successfully", 
+        title: "Profile updated successfully",
         description: result.message
       })
       fetchUserProfile()
-  }else if(response.status == 401){
+    } else if (response.status == 401) {
       setSame(true)
-  }else{
-    toast({
-        title: "Error updating profile", 
+    } else {
+      toast({
+        title: "Error updating profile",
         description: result.message
       })
-  }
-  
+    }
+
   }
 
 
@@ -149,7 +145,7 @@ const result = response.json()
   return (
     <div className='flex flex-row gap-10 '>
       <SideNav page={"profile"} />
-      <div className='flex mt-5 flex-col p-5 gap-5 w-3/5 mb-40'>
+      {filled && <div className='flex mt-5 flex-col p-5 gap-5 w-3/5 mb-40'>
         <h2 className='text-3xl font-bold'>Edit Profile</h2>
         <h2 className='text-lg'>Keep your personal details private. Information you add here is visible to anyone who can view your profile.</h2>
         <div className='flex gap-5 items-center'>
@@ -163,28 +159,42 @@ const result = response.json()
                 width={30}
                 height={30}
               />
-              <AvatarFallback>CN</AvatarFallback>
+              <AvatarFallback>PIN</AvatarFallback>
             </Avatar>
           </div>
-          <Dialog onOpenChange={(isOpen)=>setUrl('')}>
-            <DialogTrigger>
-              <Button variant="muted" size={30} className="bg-muted text-lg text-foreground p-3 rounded-3xl shadow-none">Change</Button>
+          <Dialog onOpenChange={(isOpen) => {setUrl('')}}>
+            <DialogTrigger asChild>
+              <Button  variant="muted" size={30} className="bg-muted text-lg text-foreground p-3 rounded-3xl shadow-none">Change</Button>
             </DialogTrigger>
             <DialogContent>
               <DialogHeader>
                 <h2>Select an Image</h2>
               </DialogHeader>
-              <ScrollArea className="h-[500px]">
-                <div className='columns-3'>
-                  {images.map((image, index)=>(
-                    <Image onClick={()=>setData((prevData) => ({...prevData,photo: image,}))} src={image} key={index} height={400} width={400} className='p-2 rounded-xl cursor-pointer' />
-                  ))}
-                </div>
-              </ScrollArea>
               <div>
-                <Input value={url} className="w-full shadow-none rounded-xl border-muted-foreground text-md p-5 focus:outline-muted" placeholder={'Or Enter a URL'} onChange={(e)=>{setUrl(e.target.value);setData((prevData) => ({...prevData, photo: e.target.value}))}} />
+                <Input
+                  type="file"
+                  id="fileInput"
+                  onChange={(e) => {
+                    const file = e.target.files[0];
+                    if (file) {
+                      uploadImage(file)
+                    }
+                  }}
+                  className="rounded-3xl p-2 my-5  text-center bg-muted border-2 shadow-none border-dotted"
+                />
+                <Button>Upload Image</Button>
               </div>
-              
+              <h2 className='font-semibold'>OR</h2>
+              <div>
+                
+                <Input value={url} className="w-full shadow-none rounded-xl border-muted-foreground text-md p-5 focus:outline-muted" placeholder={'Or Enter a URL'} onChange={(e) => { setUrl(e.target.value)}} />
+              </div>
+
+              <DialogFooter>
+                <DialogClose>
+                  <Button onClick={(e)=>setData((prevData) => ({ ...prevData, photo: url })) }>Save</Button>
+                </DialogClose>
+              </DialogFooter>
             </DialogContent>
           </Dialog>
 
@@ -265,7 +275,7 @@ const result = response.json()
             value={data.username}
             className="w-full shadow-none rounded-xl border-muted-foreground text-md p-5 focus:outline-muted"
           />
-          {same?<h2 className='text-sm  text-primary'>username taken</h2> :<h2 className='text-sm text-muted-foreground'>www.pinterest.com/{data.username ? data.username : user?.username}</h2>}
+          {same ? <h2 className='text-sm  text-primary'>username taken</h2> : <h2 className='text-sm text-muted-foreground'>www.pinterest.com/{data.username ? data.username : user?.username}</h2>}
         </div>
         <div className='flex flex-col font-semibold gap-5 p-2 rounded-xl'>
           <div className='flex justify-between'>
@@ -276,9 +286,10 @@ const result = response.json()
         </div>
 
       </div>
+      }
       <div className='fixed flex gap-2 justify-end p-5 h-2/10 border-t-2 bg-background bottom-0 w-full shadow-xl m-0'>
-        <Button disabled={isDataEqual} onClick={()=>setData(originalData)} variant="muted" size={30} className="bg-muted text-lg text-foreground p-3 rounded-3xl shadow-none">Reset</Button>
-        <Button disabled={isDataEqual} onClick={()=>handleSave()} size={30} className=" text-lg p-3 rounded-3xl shadow-none">Save</Button>
+        <Button disabled={isDataEqual} onClick={() => setData(originalData)} variant="muted" size={30} className="bg-muted text-lg text-foreground p-3 rounded-3xl shadow-none">Reset</Button>
+        <Button disabled={isDataEqual} onClick={() => handleSave()} size={30} className=" text-lg p-3 rounded-3xl shadow-none">Save</Button>
       </div>
     </div>
   )

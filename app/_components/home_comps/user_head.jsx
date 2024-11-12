@@ -118,7 +118,7 @@ useEffect(() => {
               height={30}
             // style={{ objectFit: 'cover' }}
             />
-            <AvatarFallback>CN</AvatarFallback>
+            <AvatarFallback></AvatarFallback>
           </Avatar>
         </Link>
       </div>

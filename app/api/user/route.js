@@ -100,7 +100,7 @@ export async function PUT(req) {
       username: body.username 
   })
 
-  if (existingUser) {
+  if (existingUser && existingUser.email !== email) {
       return new Response(JSON.stringify({ 
           success: false, 
           message: 'Username taken' 
@@ -136,7 +136,7 @@ export async function PUT(req) {
       headers: { 'Content-Type': 'application/json' },
     })
   } catch (error) {
-    return new Response(JSON.stringify({ success: false, error: error.message }), {
+    return new Response(JSON.stringify({ success: false, message: error.message }), {
       status: 500,
       headers: { 'Content-Type': 'application/json' },
     })

@@ -85,7 +85,7 @@ const page = () => {
       </div>
       <h2 className='text-muted-foreground text-sm'>{data?.description}</h2>
       <div className="flex">
-        <Button variant="muted" size={30} onClick={()=>router.push( `/user/${username}/${board}/more_ideas?board_id=${data.id}`)} className=" text-sm text-foreground p-5 rounded-3xl shadow-none flex flex-col gap-1"><Sparkles className='bg-muted hover:bg-[#E2E2E2] duration-300 p-6 rounded-2xl' size={80} strokeWidth={2.5} /> <span>More Ideas</span></Button>
+        <Button variant="muted" size={30} onClick={()=>router.push( `/user/${username}/${board}/more_ideas?board_id=${data._id}`)} className=" text-sm text-foreground p-5 rounded-3xl shadow-none flex flex-col gap-1"><Sparkles className='bg-muted hover:bg-[#E2E2E2] duration-300 p-6 rounded-2xl' size={80} strokeWidth={2.5} /> <span>More Ideas</span></Button>
         {data.pins && <Reorganize pins={data.pins} onReorder={handleReorder} />}
         {data && <Create board={data} refreshData={()=>fetchData()}/>}
       </div>

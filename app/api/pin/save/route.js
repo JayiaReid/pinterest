@@ -72,6 +72,7 @@ export async function PUT(req){
         destination.save()
 
         thisPin.saves.push(destination.user)
+        thisPin.save()
 
         return new Response(JSON.stringify({
             success: true,

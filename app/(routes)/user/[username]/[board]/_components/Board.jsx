@@ -3,7 +3,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 import React, { useEffect } from 'react'
 
-const Board = ({ board, user }) => {
+const Board = ({ board, user, other }) => {
 
   const [pins, setPins] = React.useState(0)
 
@@ -21,7 +21,7 @@ const Board = ({ board, user }) => {
 
 
   return (
-    <Link href={`/user/${user}/${board.title}`} className='p-5 max-h-[350px] w-[250px] flex flex-col '>
+    <Link href={other? {pathname: `/${user}/${board.title}`, query: {board: encodeURIComponent(JSON.stringify(board))}}:`/user/${user}/${board.title}` } className='p-5 max-h-[350px] w-[250px] flex flex-col '>
       <div className='grid grid-cols-3 grid-rows-2 rounded-xl h-[200px] w-[250px] overflow-hidden'>
         {board.private && (
           <div className="absolute p-2 z-10">

@@ -17,6 +17,7 @@ const page = () => {
   const [boards, setBoards]=React.useState([])
   const [username, setUsername] = React.useState('')
   const [filled, setFilled]=React.useState(false)
+  const [data, setData] = React.useState({})
 
 const fetchUserProfile = async () => {
     if (user) {
@@ -31,7 +32,8 @@ const fetchUserProfile = async () => {
 
             if (res.success) {
               setBoards(res.data.boards)
-                setUsername(res.data.username)
+              setUsername(res.data.username)
+              setData(res.data)
             }
             setFilled(true)
         } catch (error) {
@@ -58,7 +60,7 @@ useEffect(() => {
 
   return (
     <div className='p-5'>
-      <Profile_section state={true} />
+      <Profile_section state={true} data={data} filled={filled} />
       <div className='flex px-5 justify-between '>
       <DropdownMenu onOpenChange={(isOpen) => !isOpen && setActive(false)}>
         <DropdownMenuTrigger onClick={()=>setActive(true)}>

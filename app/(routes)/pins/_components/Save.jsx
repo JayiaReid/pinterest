@@ -70,16 +70,16 @@ const Save = ({ user, pin }) => {
             </DialogTrigger>
 
             <DialogContent className="h-3/4 rounded-xl overflow-hidden">
-                <div className="flex items-center justify-between mb-4">
+                <div className="flex items-center mb-4">
                     {selectedBoard ? (
-                        <>
+                        <div>
                             <ArrowLeft
                                 size={24}
                                 className="cursor-pointer"
                                 onClick={() => handleBackClick()}
                             />
                             <h2 className="text-xl font-bold">Save Pin to</h2>
-                        </>
+                        </div>
                     ) : (
                         <h2 className="text-xl font-bold">Save</h2>
                     )}
@@ -92,11 +92,11 @@ const Save = ({ user, pin }) => {
                             placeholder="Search boards..."
                             value={search}
                             onChange={(e) => setSearch(e.target.value)}
-                            className="shadow-none rounded-xl border-muted focus:outline-none focus:ring-2 focus:ring-primary transition-all"
+                            className="shadow-none rounded-xl border-muted focus:outline-none"
                         />
                     </div>
                 )}
-                <ScrollArea className="h-auto overflow-y-auto">
+                <ScrollArea className="h-[400px] overflow-y-auto">
                     {selectedBoard ? (
                         <div>
                             <h2 className='text-sm'>Board</h2>

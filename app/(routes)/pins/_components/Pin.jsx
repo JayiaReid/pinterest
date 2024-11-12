@@ -7,22 +7,18 @@ import { Download, Share } from 'lucide-react'
 import Image from 'next/image'
 import Link from 'next/link'
 import React, { useEffect } from 'react'
-import Save from './Save'
-import { list } from '@vercel/blob'
+// import Save from './Save'
+import useDownloader from 'react-use-downloader'
+
 
 const HoverComp = ({size, pin, user}) => {
+  const {download} = useDownloader();
 
   return (
     <div className={`absolute w-[${size || '250'}px] rounded-2xl inset-0 bg-black bg-opacity-50 flex flex-col justify-between p-3`}>
-      <div onClick={(e)=>{
-        e.stopPropagation();
-      }} className='self-end'>
-        <Save user={user} pin={pin}/>
-      </div>
-      
-      <div className="flex justify-end space-x-2">
+      <div className="flex justify-end align-bottom space-x-2">
         <Share size={30} className="bg-white p-2 rounded-full cursor-pointer" />
-        <Download size={30} className="bg-white p-2 rounded-full cursor-pointer" />
+        <Download size={30} className="bg-white p-2 rounded-full cursor-pointer" onClick={()=>download(pin?.image, `${pin?.title}.jpg`)}/>
       </div>
 
 
@@ -43,7 +39,7 @@ const Pin = ({ pin, size, user }) => {
       <Link href={`/pins/${pin._id}`} className="flex flex-col gap-3">
         <div className={`relative w-[${size || '250'}px] `}>
           <Image className="rounded-2xl" src={pin.image} width={290} height={400} alt="Pin" />
-          {show && <HoverComp size={size} pin={pin._id} user={user}/>}
+          {show && <HoverComp size={size} pin={pin} user={user}/>}
         </div>
       </Link>
     </div>
