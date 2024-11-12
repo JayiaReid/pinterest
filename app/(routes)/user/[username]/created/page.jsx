@@ -13,8 +13,31 @@ const page = () => {
 
   const [pins, setPins] = useState([])
   const { username } = useParams()
-  const {isLoaded}=useUser()
+  const {isLoaded, user}=useUser()
   const [filled, setFilled] = useState(false)
+  const [data, setData] = React.useState({})
+  
+
+  const fetchUserProfile = async () => {
+    if (user) {
+        const email = user.emailAddresses[0].emailAddress
+        try {
+            const response = await fetch(`/api/user?email=${email}`)
+            if (!response.ok) {
+                throw new Error('Network response was not ok')
+            }
+            const res = await response.json()
+            // console.log(res.data)
+
+            if (res.success) {
+              setData(res.data)
+            }
+            setFilled(true)
+        } catch (error) {
+
+        }
+    }
+}
 
   const fetchPins = async ()=>{
     try {
@@ -39,6 +62,7 @@ const page = () => {
   useEffect(()=>{
     if(isLoaded){
       fetchPins()
+      fetchUserProfile()
     }
   }, [isLoaded])
 
@@ -50,7 +74,7 @@ const page = () => {
   </div>
   return (
     <div>
-        <Profile_section/>
+        <Profile_section filled={filled} data={data}/>
         {filled&& <div>
           {pins?.length > 0? <div>
             <Pin_map pins={pins}/>

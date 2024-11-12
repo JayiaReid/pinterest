@@ -11,6 +11,7 @@ import React, { useEffect, useState } from 'react'
 
 const Profile_section = ({ setState, state, data, user, filled, refreshData }) => {
 
+    // fix profile section in created page
     const router = useRouter()
     const { isLoaded } = useUser()
     const [following, setFollowing] = useState(false)
