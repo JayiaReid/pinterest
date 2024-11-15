@@ -52,11 +52,11 @@ const Page = () => {
     }
   }
 
-  const checkFollowing = async (user) => {
-    const email = user?.emailAddresses[0].emailAddress
+  const checkFollowing = async (_id, pin) => {
 
-    user.followers?.forEach(follower => {
-      if (follower.email == email) {
+    pin.user?.followers.forEach(follower => {
+      console.log(follower)
+      if (follower == _id) {
         setFollowing(true)
       }
     })
@@ -74,6 +74,7 @@ const Page = () => {
       if (response.ok) {
         const res = await response.json()
         const pin = res.data.filter(pin => pin._id == id)
+        console.log(pin)
         setPin(pin[0])
         const user = await getUser()
         setUser(user)
@@ -81,7 +82,7 @@ const Page = () => {
         const user_id = user._id
 
         setComment((prevData) => ({ ...prevData, username, user_id }))
-        checkFollowing(user)
+        checkFollowing(user_id, pin[0])
         setLiked(pin[0].likes.some(like => like === user_id))
 
         // find similar pins
@@ -174,43 +175,43 @@ const Page = () => {
   const followUser = async (_id) => {
 
     try {
-      const email = user.emailAddresses[0].emailAddress
+        const email = user.emailAddresses[0].emailAddress
+        
+        if (!following) {
+            const response = await fetch('/api/users', {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({op: true, email, _id}),
+            })
+            console.log(response)
 
-      if (!following) {
-        const response = await fetch('/api/users', {
-          method: 'PUT',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ op: true, email, _id }),
-        })
-        console.log(response)
+            setFollowing(true)
+            fetchPins()
+        }else{
+            const response = await fetch('/api/users', {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({op: false, email, _id}),
+            })
+            console.log(response)
 
-        setFollowing(true)
-        fetchPins()
-      } else {
-        const response = await fetch('/api/users', {
-          method: 'PUT',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ op: false, email, _id }),
-        })
-        console.log(response)
-
-        setFollowing(false)
-        fetchPins()
-      }
+            setFollowing(false)
+            fetchPins()
+        }
     } catch (error) {
-      console.log(error)
+        console.log(error)
     }
+}
 
-
-  }
 
   useEffect(() => {
     if (isLoaded) {
       fetchPins()
+      
     }
   }, [isLoaded])
 
@@ -260,7 +261,7 @@ const Page = () => {
                     <h2 className="text-sm">{pin.user?.followersNum} followers</h2>
                   </div>
                 </Link>
-                <Button onClick={()=>followUser(userData._id)} variant="outline" size={30} className=" text-foreground self-end text-lg px-4 py-2 rounded-3xl shadow-none">Follow</Button>
+                {pin && pin.user?.email !== userData.email && <Button onClick={()=>followUser(pin.user?._id)} variant="outline" size={30} className=" text-foreground self-end text-lg px-4 py-2 rounded-3xl shadow-none">{following? 'Following': 'Follow'} {following}</Button>}
               </div>
 
               <div className='flex flex-col gap-5'>

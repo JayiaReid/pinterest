@@ -10,6 +10,7 @@ import Section from './[section]/_components/Section'
 import Edit from './_components/Edit'
 import Reorganize from './_components/reorganize'
 import Create from './[section]/_components/CreateSection'
+import { toast } from '@/hooks/use-toast'
 
 const page = () => {
   const [edit, setEdit] = React.useState(false)
@@ -20,6 +21,7 @@ const page = () => {
   const username = search.username
   const board = search.board
   const [pins, setPins]=React.useState(0)
+  const [reorderedPins, setReorderedPins]=React.useState(data?.pins || [])
 
   const fetchData = async ()=>{
     if (user) {
@@ -30,7 +32,7 @@ const page = () => {
               throw new Error('Network response was not ok')
           }
           const res = await response.json()
-          console.log(res.data)
+          // console.log(res.data)
 
           if (res.success) {
             setData(res.data)
@@ -62,12 +64,38 @@ const page = () => {
   }, [user, isLoaded])
 
   
-  const handleReorder = (newPins) => {
-    data.pins = newPins
-    console.log(newPins, data.pins)
+  const handleReorder = async () => {
+    setData((prevData) => ({
+      ...prevData,
+      pins: reorderedPins,
+  }))
+
+  let array = []
+
+  reorderedPins.forEach(pin=>{
+    array.push(pin._id)
+  })
+    // console.log(array)
+
+    try {
+      const response = await fetch('/api/board/reorder',{
+        method: 'PUT',
+        body: JSON.stringify({pins: array, _id: data._id})
+      }) 
+      if(response.ok){
+        fetchData()
+      }else{
+        res = response.json()
+        toast({
+          title: "Error updating board",
+          description: res.message
+        })
+      }
+    } catch (error) {
+      console.log(error)
+    }
   }
 
-  // const { isLoaded } = useUser()
   const router = useRouter()
 
 
@@ -86,7 +114,7 @@ const page = () => {
       <h2 className='text-muted-foreground text-sm'>{data?.description}</h2>
       <div className="flex">
         <Button variant="muted" size={30} onClick={()=>router.push( `/user/${username}/${board}/more_ideas?board_id=${data._id}`)} className=" text-sm text-foreground p-5 rounded-3xl shadow-none flex flex-col gap-1"><Sparkles className='bg-muted hover:bg-[#E2E2E2] duration-300 p-6 rounded-2xl' size={80} strokeWidth={2.5} /> <span>More Ideas</span></Button>
-        {data.pins && <Reorganize pins={data.pins} onReorder={()=>handleReorder()} />}
+        {data.pins && <Reorganize pins={data?.pins} setPins={setReorderedPins} onReorder={handleReorder} />      }
         {data && <Create board={data} refreshData={()=>fetchData()}/>}
       </div>
       <div className='w-full p-5'>

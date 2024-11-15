@@ -15,9 +15,9 @@ const Profile_section = ({ setState, state, data, user, filled, refreshData }) =
     const router = useRouter()
     const { isLoaded } = useUser()
     const [following, setFollowing] = useState(false)
+    const email = user?.emailAddresses[0].emailAddress || ''
 
     const checkFollowing = async () => {
-        const email = user.emailAddresses[0].emailAddress
 
         data.followers?.forEach(follower => {
             // console.log(follower.email, email)
@@ -37,7 +37,7 @@ const Profile_section = ({ setState, state, data, user, filled, refreshData }) =
     const followUser = async () => {
 
         try {
-            const email = user.emailAddresses[0].emailAddress
+            // const email = user.emailAddresses[0].emailAddress
             
             if (!following) {
                 const response = await fetch('/api/users', {
@@ -95,7 +95,7 @@ const Profile_section = ({ setState, state, data, user, filled, refreshData }) =
                 <h2 className="font-bold text-forground flex">{data?.followersNum} followers <DotIcon /> {data?.followingNum} following</h2>
                 {user ? <div className="flex gap-2">
                     <Button onClick={() => router.push(`/`)} variant="muted" size={30} className="bg-muted text-lg text-foreground p-3 rounded-3xl shadow-none">Share</Button>
-                    <Button onClick={() => followUser()} variant="muted" size={30} className={`${following ? "bg-black" : "bg-primary"} text-lg text-white p-3 rounded-3xl shadow-none`}>{following ? 'Following' : 'Follow'}</Button>
+                   {data && data.email !== email && <Button onClick={() => followUser()} variant="muted" size={30} className={`${following ? "bg-black" : "bg-primary"} text-lg text-white p-3 rounded-3xl shadow-none`}>{following ? 'Following' : 'Follow'}</Button>}
                 </div> : <div className="flex gap-2">
                     <Button onClick={() => router.push(`/`)} variant="muted" size={30} className="bg-muted text-lg text-foreground p-3 rounded-3xl shadow-none">Share</Button>
                     <Button onClick={() => router.push(`/settings/profile`)} variant="muted" size={30} className=" bg-muted text-lg text-foreground p-3 rounded-3xl shadow-none">Edit Profile</Button>

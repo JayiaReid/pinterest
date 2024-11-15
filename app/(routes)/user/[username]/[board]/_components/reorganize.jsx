@@ -35,7 +35,7 @@ const DraggablePin = ({ pin, index, movePin }) => {
     )
 }
 
-const Reorganize = ({ pins, onReorder }) => {
+const Reorganize = ({ pins, setPins, onReorder }) => {
     const [open, setOpen] = useState(false)
     const [localPins, setLocalPins] = useState(pins)
 
@@ -45,11 +45,13 @@ const Reorganize = ({ pins, onReorder }) => {
         updatedPins.splice(fromIndex, 1)
         updatedPins.splice(toIndex, 0, movedPin)
         setLocalPins(updatedPins)
+        setPins(updatedPins)
         console.log(updatedPins)
     }
 
     const handleSave = () => {
-        onReorder(localPins)
+        setPins(localPins)
+        onReorder()
         setOpen(false)
     }
 
