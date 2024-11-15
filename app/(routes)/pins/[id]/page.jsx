@@ -106,7 +106,7 @@ const Page = () => {
             'Content-Type': 'application/json'
           },
           body: JSON.stringify({
-            user: pin.user._id,
+            user: userData._id,
             pin: id
           })
         })
@@ -126,7 +126,7 @@ const Page = () => {
             'Content-Type': 'application/json'
           },
           body: JSON.stringify({
-            user: pin.user._id,
+            user: userData._id,
             pin: id
           })
         })
@@ -247,7 +247,7 @@ const Page = () => {
                 <Link href={`/${pin.user?.username}/`} className="flex items-center gap-2">
                   <Avatar className="w-[40px] max-w-[70px] h-[40px]">
                     <AvatarImage
-                      src={userData.photo}
+                      src={pin.user?.photo}
                       alt="profile picture"
                       className="object-cover rounded-full"
                       width={5}

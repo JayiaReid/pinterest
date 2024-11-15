@@ -9,7 +9,6 @@ import { useParams } from 'next/navigation'
 import Pin_map from '@/app/_components/global_comps/pin_map'
 
 const page = () => {
-  // be able to edit posted pins in edit profile
 
   const [pins, setPins] = useState([])
   const { username } = useParams()
