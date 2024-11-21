@@ -57,13 +57,13 @@ export async function POST(req, res) {
 export async function GET(req) {
     // Get one board by user and title
     const { searchParams } = new URL(req.url)
-    const email = searchParams.get('email')
+    const username = searchParams.get('username')
     const title = searchParams.get('title')
 
     await PinterestDB()
 
     try {
-        const user = await user_profile.findOne({email})
+        const user = await user_profile.findOne({username})
 
         const board = await user_board.findOne({ 
             user: user._id, 

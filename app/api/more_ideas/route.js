@@ -25,7 +25,10 @@ export async function GET(req) {
         const pins = await Pin.find({
             keywords: { $in: pinKeywords },
         })
-            .populate("user")
+            .populate({
+                path: 'user',
+                select: '-email ', 
+              })
             .populate("likes")
             .populate({
                 path: "comments",

@@ -59,12 +59,16 @@ const page = () => {
                 )
 
                 const filteredByUser = res.data.filter(pin=>pin.user.username.toLowerCase().includes(q))
+                const filteredByfname = res.data.filter(pin=>pin.user.firstName.toLowerCase().includes(q))
+                const filteredBylname = res.data.filter(pin=>pin.user.lastName.toLowerCase().includes(q))
                 
                 const combinedPins = [
                     ...filteredByTitle,
                     ...filteredByKeyword,
                     ...filteredByDescription,
                     ...filteredByUser,
+                    ...filteredByfname,
+                    ...filteredBylname
                   ]
                   
                   const uniquePins = Array.from(new Map(combinedPins.map(pin => [pin._id, pin])).values())

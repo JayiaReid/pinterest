@@ -1,6 +1,7 @@
 "use client"
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Button } from '@/components/ui/button'
+import { Dialog, DialogContent, DialogTitle, DialogTrigger } from '@/components/ui/dialog'
 import { Skeleton } from '@/components/ui/skeleton'
 import { useUser } from '@clerk/nextjs'
 import { DotIcon, Globe } from 'lucide-react'
@@ -8,6 +9,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import React, { useEffect, useState } from 'react'
+import User from './User'
 
 const Profile_section = ({ setState, state, data, user, filled, refreshData }) => {
 
@@ -15,13 +17,13 @@ const Profile_section = ({ setState, state, data, user, filled, refreshData }) =
     const router = useRouter()
     const { isLoaded } = useUser()
     const [following, setFollowing] = useState(false)
-    const email = user?.emailAddresses[0].emailAddress || ''
+    const email = user?.user.emailAddresses[0].emailAddress || ''
 
     const checkFollowing = async () => {
 
         data.followers?.forEach(follower => {
-            // console.log(follower.email, email)
-            if (follower.email == email) {
+            // console.log(follower.username,'here', user.username)
+            if (follower.username == user.thisUser.username) {
                 setFollowing(true)
             }
         })
@@ -34,30 +36,31 @@ const Profile_section = ({ setState, state, data, user, filled, refreshData }) =
 
     }, [data])
 
-    const followUser = async () => {
+    const followUser = async (following, username, _id) => {
 
+        // console.log(username, _id)
         try {
             // const email = user.emailAddresses[0].emailAddress
-            
+
             if (!following) {
                 const response = await fetch('/api/users', {
                     method: 'PUT',
                     headers: {
                         'Content-Type': 'application/json',
                     },
-                    body: JSON.stringify({op: true, email, _id: data._id}),
+                    body: JSON.stringify({ op: true, username, _id }),
                 })
                 console.log(response)
 
                 setFollowing(true)
                 refreshData()
-            }else{
+            } else {
                 const response = await fetch('/api/users', {
                     method: 'PUT',
                     headers: {
                         'Content-Type': 'application/json',
                     },
-                    body: JSON.stringify({op: false, email, _id: data._id}),
+                    body: JSON.stringify({ op: false, username, _id }),
                 })
                 console.log(response)
 
@@ -70,6 +73,22 @@ const Profile_section = ({ setState, state, data, user, filled, refreshData }) =
 
 
     }
+
+    const checkSpecificFollowing = (specficUser) => {
+
+        let thisUser = user ? user.thisUser : data
+
+        thisUser.following?.forEach(following => {
+            // console.log(follower.username,'here', user.username)
+            if (following.username == specficUser.username) {
+                return true
+            }
+
+            
+        })
+        return false
+    }
+
 
     return (
         <div className='bg-background mt-5 h-1/2'>
@@ -92,10 +111,35 @@ const Profile_section = ({ setState, state, data, user, filled, refreshData }) =
                     <Image src={'/pin_code.png'} height={15} width={15} />
                     <h2 className="text-sm text-[#767676d6]">{data?.username}</h2>
                 </div>
-                <h2 className="font-bold text-forground flex">{data?.followersNum} followers <DotIcon /> {data?.followingNum} following</h2>
+                {/* <h2 className="font-bold text-forground flex">{data?.followersNum} followers <DotIcon /> {data?.followingNum} following</h2> */}
+                <h2 className="font-bold text-forground flex">
+                    <Dialog>
+                        <DialogTrigger asChild>
+                            <span className='cursor-pointer'>{data?.followersNum} followers </span>
+                        </DialogTrigger>
+                        <DialogContent>
+                            <DialogTitle><h2>Followers</h2></DialogTitle>
+                            {data?.followers.map((follower, key) => (
+                                <User followUser={() => followUser(checkSpecificFollowing(follower), user ? user.thisUser.username : data?.username, follower._id)} user={follower} thisUser={user ? user.thisUser : data} />
+                            ))}
+                        </DialogContent>
+                    </Dialog>
+                    <DotIcon /> <Dialog>
+                        <DialogTrigger asChild>
+                            <span className='cursor-pointer'>{data?.followingNum} following</span>
+                        </DialogTrigger>
+                        <DialogContent>
+                            <DialogTitle><h2>Following</h2></DialogTitle>
+                            {data?.following.map((following, key) => (
+                                <User followUser={() => followUser(true, user ? user.thisUser.username : data?.username, following._id)} user={following} thisUser={user ? user.thisUser : data} />
+                            ))}
+                        </DialogContent>
+                    </Dialog>
+
+                </h2>
                 {user ? <div className="flex gap-2">
                     <Button onClick={() => router.push(`/`)} variant="muted" size={30} className="bg-muted text-lg text-foreground p-3 rounded-3xl shadow-none">Share</Button>
-                   {data && data.email !== email && <Button onClick={() => followUser()} variant="muted" size={30} className={`${following ? "bg-black" : "bg-primary"} text-lg text-white p-3 rounded-3xl shadow-none`}>{following ? 'Following' : 'Follow'}</Button>}
+                    {data && user.thisUser.username != data.username && <Button onClick={() => followUser(following, user.thisUser.username, data._id)} variant="muted" size={30} className={`${following ? "bg-black" : "bg-primary"} text-lg text-white p-3 rounded-3xl shadow-none`}>{following ? 'Following' : 'Follow'}</Button>}
                 </div> : <div className="flex gap-2">
                     <Button onClick={() => router.push(`/`)} variant="muted" size={30} className="bg-muted text-lg text-foreground p-3 rounded-3xl shadow-none">Share</Button>
                     <Button onClick={() => router.push(`/settings/profile`)} variant="muted" size={30} className=" bg-muted text-lg text-foreground p-3 rounded-3xl shadow-none">Edit Profile</Button>

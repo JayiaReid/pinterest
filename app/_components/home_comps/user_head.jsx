@@ -31,17 +31,22 @@ const Head = () => {
   const [username, setUsername] = React.useState('')
   const [photo, setPhoto] = React.useState('')
 
-const fetchUserProfile = async () => {
+  const fetchUserProfile = async () => {
     if (user) {
         const email = user.emailAddresses[0].emailAddress
         try {
-            const response = await fetch(`/api/user?email=${email}`)
+            const response = await fetch('/api/user', {
+                method: 'POST',
+                headers: {
+                  'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({email}),
+              })
             if (!response.ok) {
                 throw new Error('Network response was not ok')
             }
             const res = await response.json()
-
-            if (res.success) {
+            if (response.status == 200) {
                 setUsername(res.data.username)
                 setPhoto(res.data.photo)
             }
@@ -50,6 +55,7 @@ const fetchUserProfile = async () => {
         }
     }
 }
+
 
 useEffect(() => {
   if (isLoaded) {

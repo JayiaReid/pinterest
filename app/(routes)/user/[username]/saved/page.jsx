@@ -23,14 +23,20 @@ const fetchUserProfile = async () => {
     if (user) {
         const email = user.emailAddresses[0].emailAddress
         try {
-            const response = await fetch(`/api/user?email=${email}`)
+            const response = await fetch('/api/user', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({email}),
+            })
             if (!response.ok) {
                 throw new Error('Network response was not ok')
             }
             const res = await response.json()
             // console.log(res.data)
 
-            if (res.success) {
+            if (response.status == 200) {
               setBoards(res.data.boards)
               setUsername(res.data.username)
               setData(res.data)
@@ -60,7 +66,7 @@ useEffect(() => {
 
   return (
     <div className='p-5'>
-      <Profile_section state={true} data={data} filled={filled} />
+      <Profile_section state={true} data={data} filled={filled} refreshData={()=>fetchUserProfile()} />
       <div className='flex px-5 justify-between '>
       <DropdownMenu onOpenChange={(isOpen) => !isOpen && setActive(false)}>
         <DropdownMenuTrigger onClick={()=>setActive(true)}>

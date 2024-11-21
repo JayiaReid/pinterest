@@ -21,22 +21,26 @@ const page = () => {
     if (user) {
         const email = user.emailAddresses[0].emailAddress
         try {
-            const response = await fetch(`/api/user?email=${email}`)
+            const response = await fetch('/api/user', {
+                method: 'POST',
+                headers: {
+                  'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({email}),
+              })
             if (!response.ok) {
                 throw new Error('Network response was not ok')
             }
             const res = await response.json()
-            // console.log(res.data)
-
-            if (res.success) {
-              setData(res.data)
+            if (response.status == 200) {
+                setData(res.data)
             }
-            setFilled(true)
         } catch (error) {
 
         }
     }
 }
+
 
   const fetchPins = async ()=>{
     try {

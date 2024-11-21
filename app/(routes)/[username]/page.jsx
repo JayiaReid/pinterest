@@ -15,10 +15,26 @@ const page = () => {
     const { user, isLoaded } = useUser()
     const [state, setState]=useState(true)
     const [pins, setPins] = useState([])
+    const [thisUser, setThisUser] = useState({})
 
     const fetchUserProfile = async () => {
+        
         if (username) {
             try {
+                const response2 = await fetch('/api/user', {
+                    method: 'POST',
+                    headers: {
+                      'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({email: user?.emailAddresses[0].emailAddress}),
+                  })
+                  const res2 = await response2.json()
+                  console.log(res2)
+
+                  if (res2.success) {
+                    setThisUser(res2.data)
+                  }
+
                 const response = await fetch(`/api/users?username=${username}`)
                 if (!response.ok) {
                     throw new Error('Network response was not ok')
@@ -31,7 +47,10 @@ const page = () => {
                     setPins(res.pins)
                     setData(res.data)
                 }
-                setFilled(true)
+                
+
+                
+                    setFilled(true)
             } catch (error) {
 
             }
@@ -39,7 +58,7 @@ const page = () => {
     }
 
     useEffect(()=>{
-        if(isLoaded){
+        if(user){
             fetchUserProfile()
         }
     }, [username, isLoaded])
@@ -50,7 +69,7 @@ const page = () => {
 
     return (
         <div className='p-5'>
-            <Profile_section state={state} setState={setState} user={user} data={data} filled={filled} refreshData={()=>fetchUserProfile()}/>
+            <Profile_section state={state} setState={setState} user={{user, thisUser }} data={data} filled={filled} refreshData={()=>fetchUserProfile()}/>
             {state? <div className=' grid grid-cols-2 xl:grid-cols-5 lg:grid-cols-4 md:grid-cols-3 sm:grid-cols-2'>
         {boards.map((board, index) => (
           <Board key={index} board={board} user={username} other={true}/>

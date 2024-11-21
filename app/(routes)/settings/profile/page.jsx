@@ -47,7 +47,13 @@ const Page = () => {
       setOriginalData((prevData) => ({ ...prevData, email }))
 
       try {
-        const response = await fetch(`/api/user?email=${email}`)
+        const response = await fetch('/api/user', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({email}),
+        })
         if (!response.ok) {
           throw new Error('Network response was not ok')
         }

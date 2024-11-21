@@ -46,38 +46,32 @@ const Home_user = () => {
       const email = user.emailAddresses[0].emailAddress
 
       try {
-        const response = await fetch(`/api/user?email=${email}`, {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json'
-          }
-        })
-        if (response.status === 404) {
-          const userData = {
-            firstName: user.firstName,
-            lastName: user.lastName || 'no last name',
-            email: email,
-            about: "",
-            website: "",
-            username: user.id,
-            photo: "/defaultpp.jpg",
-            followersNum: 0,
-            followingNum: 0,
-          }
 
-          const res = await fetch('/api/user', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(userData),
-          })
+        const userData = {
+          firstName: user.firstName,
+          lastName: user.lastName || 'no last name',
+          email: email,
+          about: "",
+          website: "",
+          username: user.id,
+          photo: "/defaultpp.jpg",
+          followersNum: 0,
+          followingNum: 0,
+        }
+
+        const response = await fetch('/api/user', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(userData),
+        })
+
+        const res = await response.json()
+        if (response.status === 201 && res.ok ) {
           // console.log(res)
-          if (res.ok) {
-            router.push('/settings/profile')
-          }
+          router.push('/settings/profile')
         } else if (response.status == 200) {
-          const res = await response.json()
           setUserData(res.data)
           // console.log('found', res.data)
           setFilled(true)

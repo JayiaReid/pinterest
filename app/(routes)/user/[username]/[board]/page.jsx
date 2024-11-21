@@ -27,7 +27,8 @@ const page = () => {
     if (user) {
       const email = user.emailAddresses[0].emailAddress
       try {
-          const response = await fetch(`/api/board?email=${email}&title=${board}`)
+        // change to matching username
+          const response = await fetch(`/api/board?username=${username}&title=${board}`)
           if (!response.ok) {
               throw new Error('Network response was not ok')
           }

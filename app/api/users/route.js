@@ -23,7 +23,14 @@ export async function GET(req) {
       populate:{
         path: 'pins'
       }
-    }).populate('followers').populate('following')
+    }).populate({
+      path: 'followers',
+      select: '-email ', 
+    })
+    .populate({
+      path: 'following',
+      select: '-email',
+    }).select('-email')
 
     const pins = await Pin.find({user: user._id})
 
@@ -40,7 +47,12 @@ export async function GET(req) {
         headers: { 'Content-Type': 'application/json' },
       })
       }else{
-        const users = await user_profile.find({username: {$regex: q, $options: 'i'}})
+        const users = await user_profile.find({$or: [
+          {username: {$regex: q, $options: 'i'}},
+          {firstName: {$regex: q, $options: 'i'}},
+          {username: {$regex: q, $options: 'i'}},
+          {about: {$regex: q, $options: 'i'}},
+        ]})
 
         if (!users) {
           return new Response(JSON.stringify({ success: false, message: 'User profile not found' }), {
@@ -67,13 +79,13 @@ export async function PUT(req){
   
   const body = await req.json()
 
-  const {op, email, _id} = body
+  const {op, username, _id} = body
 
   try {
 
     await PinterestDB()
     if(op){
-      const thisUser = await user_profile.findOne({email})
+      const thisUser = await user_profile.findOne({username})
 
       const user = await user_profile.findById(_id)
 
@@ -93,7 +105,7 @@ export async function PUT(req){
         headers: { 'Content-Type': 'application/json' },
     })
     }else{
-      const thisUser = await user_profile.findOne({email})
+      const thisUser = await user_profile.findOne({username})
 
       const user = await user_profile.findById(_id)
 
@@ -117,7 +129,7 @@ export async function PUT(req){
       
    
   } catch (error) {
-    return new Response(JSON.stringify({ success: false, error: error.message }), {
+    return new Response(JSON.stringify({ success: false, error: error }), {
       status: 500,
       headers: { 'Content-Type': 'application/json' },
     })
