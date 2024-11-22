@@ -4,8 +4,6 @@ import user_profile from "@/models/user_profile"
 import Section from "@/models/Section"
 import Pin from "@/models/Pin"
 
-// reconfigue the models again
-
 export async function POST(req, res) {
     await PinterestDB()
 
@@ -21,7 +19,8 @@ export async function POST(req, res) {
         if (existingBoard) {
             return new Response(JSON.stringify({ 
                 success: false, 
-                message: 'A board with this title already exists for this user.' 
+                message: 'A board with this title already exists for this user.' ,
+                // data: existingBoard
             }), {
                 status: 400,
                 headers: { 'Content-Type': 'application/json' },

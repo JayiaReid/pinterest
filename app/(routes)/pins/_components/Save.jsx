@@ -38,6 +38,8 @@ const Save = ({ user, pin }) => {
 
             if (response.ok) {
                 router.push(`/user/${user?.username}/${title}`)
+            }else{
+                console.log(response)
             }
         } catch (error) {
             console.log(error)

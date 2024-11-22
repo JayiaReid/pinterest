@@ -18,7 +18,8 @@ export async function POST(req, res) {
         if (existingSection) {
             return new Response(JSON.stringify({ 
                 success: false, 
-                message: 'A section with this title already exists for this user.' 
+                message: 'A section with this title already exists for this user.' ,
+                // data: existingSection
             }), {
                 status: 400,
                 headers: { 'Content-Type': 'application/json' },
@@ -54,19 +55,21 @@ export async function POST(req, res) {
 export async function GET(req) {
     // Get one board by user and title
     const { searchParams } = new URL(req.url)
-    // const email = searchParams.get('email')
+    const username = searchParams.get('username')
     const title = searchParams.get('title')
     const board = searchParams.get('board')
 
     await PinterestDB()
 
     try {
-        // const user = await user_profile.findOne({email})
+        const user = await user_profile.findOne({username})
+
+        const thisBoard = await user_board.findOne({user: user._id, title: board})
 
         const section = await Section.findOne({ 
-            board, 
+            board: thisBoard._id, 
             title 
-        })
+        }).populate('pins').populate('board')
 
         if (!section) {
             return new Response(JSON.stringify({ 

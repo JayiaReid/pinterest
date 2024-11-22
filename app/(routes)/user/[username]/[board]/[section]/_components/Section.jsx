@@ -4,7 +4,7 @@ import React from 'react'
 
 const Section = ({section, board, username, other}) => {
   return (
-    <Link href={!other? {pathname: `/user/${username}/${board.title}/${section.title}`, query: {section: encodeURIComponent(JSON.stringify(section)), board: encodeURIComponent(JSON.stringify(board))}}: {pathname: `/${username}/${board.title}/${section.title}`, query: {section: encodeURIComponent(JSON.stringify(section)), board: encodeURIComponent(JSON.stringify(board))}}} className='p-5 h-[250px] w-[270px] flex flex-col '>
+    <Link href={!other? {pathname: `/user/${username}/${board.title}/${section.title}`}: {pathname: `/${username}/${board.title}/${section.title}`, query: {section: encodeURIComponent(JSON.stringify(section)), board: encodeURIComponent(JSON.stringify(board))}}} className='p-5 h-[250px] w-[270px] flex flex-col '>
     <div className='grid grid-cols-3  rounded-xl h-[200px] w-[250px] overflow-hidden'>
       
       {section.images.slice(0, 3).map((image, index) => (

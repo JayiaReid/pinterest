@@ -9,7 +9,7 @@ const Pin = new mongoose.Schema({
     likes: [{type: mongoose.SchemaTypes.ObjectId, ref: 'user_profile', default: []}],
     keywords: [{type: String, default: []}],
     link: {type: String, default: ''},
-    saves: [{type: mongoose.SchemaTypes.ObjectId, ref: 'Save', default: []}]
+    saves: [{type: mongoose.SchemaTypes.ObjectId, ref: 'user_board', default: []}]
 })
 
 export default mongoose.models.Pin ||  mongoose.model('Pin', Pin)
