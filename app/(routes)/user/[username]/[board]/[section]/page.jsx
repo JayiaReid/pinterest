@@ -55,15 +55,13 @@ const page = () => {
     }
   }
 
-  const handleReorder = async () => {
+  const handleReorder = async (pins) => {
 
     let array = []
 
-    reorderedPins.forEach(pin => {
+    pins.forEach(pin => {
       array.push(pin._id)
     })
-    console.log(array)
-
     try {
       const response = await fetch('/api/section/reorder', {
         method: 'PUT',
@@ -71,6 +69,7 @@ const page = () => {
       })
       if (response.ok) {
         console.log(response)
+        setReorderedPins(array)
         fetchData()
       } else {
         const res = response.json()

@@ -244,7 +244,7 @@ const Page = () => {
               <h2>{pin?.description}</h2>
               {pin.link && <Link href={pin?.link} className='font-bold'>{pin?.link}</Link>}
 
-              <div className='flex items-center justify-between'>
+              <div className='flex items-center gap-5 justify-between'>
                 <Link href={`/${pin.user?.username}/`} className="flex items-center gap-2">
                   <Avatar className="w-[40px] max-w-[70px] h-[40px]">
                     <AvatarImage
@@ -261,7 +261,7 @@ const Page = () => {
                     <h2 className="text-sm">{pin.user?.followersNum} followers</h2>
                   </div>
                 </Link>
-                {pin && pin.user?.email !== userData.email && <Button onClick={()=>followUser(pin.user?._id)} variant="outline" size={30} className=" text-foreground self-end text-lg px-4 py-2 rounded-3xl shadow-none">{following? 'Following': 'Follow'} {following}</Button>}
+                {pin && pin.user?.username !== userData.username && <Button onClick={()=>followUser(pin.user?._id)} variant="outline" size={30} className=" text-foreground self-end text-lg px-4 py-2 rounded-3xl shadow-none">{following? 'Following': 'Follow'} {following}</Button>}
               </div>
 
               <div className='flex flex-col gap-5'>

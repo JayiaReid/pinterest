@@ -12,6 +12,8 @@ import Image from 'next/image'
 
 const ItemType = 'PIN'
 
+// gosh darn freaking useless
+
 const DraggablePin = ({ pin, index, movePin, setSelected }) => {
     const [, ref] = useDrag({
         type: ItemType,
@@ -33,15 +35,17 @@ const DraggablePin = ({ pin, index, movePin, setSelected }) => {
     return (
         <div ref={(node) => ref(drop(node))}>
             {/* <SlidersHorizontal/> */}
-            <Image onClick={()=>{
-                if(!select){
-                    setSelected((prev)=>[...prev, pin])
-                }else{
+            <Image onClick={() => {
+                if (!select) {
+                    setSelected((prev) => [...prev, pin])
+                    // setLocalPins(prev => prev.filter(selectedPin => selectedPin !== pin))
+                } else {
                     setSelected(prev => prev.filter(selectedPin => selectedPin !== pin))
+                    // setLocalPins((prev) => [...prev, pin])
                 }
                 setSelect(!select);
-                
-            }} src={pin.image} width={250} height={400} className={`${select? 'border-primary border-2' : ''} p-2 rounded-2xl cursor-pointer object-cover`}/>
+
+            }} src={pin.image} width={250} height={400} className={`${select ? 'border-primary border-2' : ''} p-2 rounded-2xl cursor-pointer object-cover`} />
         </div>
     )
 }
@@ -52,30 +56,14 @@ const Reorganize = ({ pins, setPins, onReorder, _id }) => {
     const [selected, setSelected] = useState([])
 
     const onDelete = async () =>{
-        selected.forEach(async pin=>{
-
-            const response = await fetch('/api/pin/save',{
-                method: "DELETE",
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({pin: pin._id, _id})
-            } )
-            if(response.ok){
-                await onReorder()
-                setOpen(false)
-              }else{
-                const res = response.json()
-                toast({
-                  title: "Error updating board",
-                  description: res.message
-                })
-              }
-        })
-
+        const arr = localPins.filter(pin=>!selected.includes(pin))
+        console.log(arr)
+        setPins(arr)
+        setLocalPins(arr)
+        onReorder(arr)
         setSelected([])
     }
-    
+
     const movePin = (fromIndex, toIndex) => {
         const updatedPins = Array.from(localPins)
         const movedPin = updatedPins[fromIndex]
@@ -83,14 +71,13 @@ const Reorganize = ({ pins, setPins, onReorder, _id }) => {
         updatedPins.splice(toIndex, 0, movedPin)
         setLocalPins(updatedPins)
         setPins(updatedPins)
-        console.log(updatedPins)
+        // console.log(updatedPins)
+        onReorder(updatedPins)
     }
 
-    const handleSave = () => {
-        setPins(localPins)
-        onReorder()
-        setOpen(false)
-    }
+    // const handleSave = () => {
+    //     setPins(localPins)
+    // }
 
     return (
         <Dialog open={open} onOpenChange={setOpen}>
@@ -101,20 +88,21 @@ const Reorganize = ({ pins, setPins, onReorder, _id }) => {
                 </Button>
             </DialogTrigger>
             <DialogContent className="w-[1500px] h-3/4">
-                <DialogTitle>Reorganize Pins</DialogTitle>
+                <DialogTitle>Reorganize Pins (select or drag)</DialogTitle>
                 <DndProvider backend={HTML5Backend}>
                     <ScrollArea className="">
                         <div className='columns-2'>
                             {localPins.map((pin, index) => (
-                            <DraggablePin key={index} index={index} pin={pin} movePin={movePin} setSelected={setSelected} />
-                        ))}
+                                <DraggablePin key={index} index={index} pin={pin} movePin={movePin} setSelected={setSelected}  />
+                            ))}
                         </div>
+                        
                     </ScrollArea>
                 </DndProvider>
                 <div className="flex justify-end mt-4">
-                    {selected.length>0 && <Button onClick={()=>onDelete()} variant="outline" className="mr-2">Delete Selected Pins</Button>}
-                    <Button variant="outline" onClick={() => setOpen(false)} className="mr-2">Cancel</Button>
-                    <Button onClick={()=>handleSave()}>Save Order</Button>
+                    {selected.length > 0 && <Button onClick={() => onDelete()} className="mr-2">Delete {selected.length} Pins</Button>}
+                    <Button variant="outline" onClick={() => {setOpen(false); setSelected([])}} className="mr-2">Done</Button>
+                    {/* <Button onClick={() => handleSave()}>Save Order</Button> */}
                 </div>
                 <DialogClose />
             </DialogContent>

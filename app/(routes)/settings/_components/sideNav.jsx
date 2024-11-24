@@ -12,9 +12,9 @@ const sideNav = ({page}) => {
         <div >
             <Button onClick={() =>  router.push(`/settings/profile`)} variant="muted" className={`${page == 'profile'? " border-b-4 rounded-none border-b-black" : "hover:bg-muted hover:rounded-xl cursor-pointer"}  text-lg duration-300 px-2  py-2 font-semibold `}>Edit profile</Button>
         </div>
-        {/* <div >
-            <Button onClick={() =>  router.push(`/settings/account-settings`)} variant="muted" className={`${page == 'account'? " border-b-4 rounded-none border-b-black" : "hover:bg-muted hover:rounded-xl cursor-pointer"}  text-lg duration-300 px-2  py-2 font-semibold`}>Account Management</Button>
-        </div> */}
+        <div >
+            <Button onClick={() =>  router.push(`/settings/pins`)} variant="muted" className={`${page == 'pins'? " border-b-4 rounded-none border-b-black" : "hover:bg-muted hover:rounded-xl cursor-pointer"}  text-lg duration-300 px-2  py-2 font-semibold`}>Edit Pins</Button>
+        </div>
     </div>
   )
 }

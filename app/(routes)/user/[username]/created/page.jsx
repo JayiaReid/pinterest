@@ -71,7 +71,7 @@ const page = () => {
 
 
     
-
+// be able to delete pins
     if (!isLoaded) return <div className="flex items-center justify-center absolute h-screen bg-white w-screen top-0 left-0">
     <div className='loader'></div>
   </div>

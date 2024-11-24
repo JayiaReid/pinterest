@@ -286,7 +286,7 @@ const Page = () => {
         <div className='flex flex-col font-semibold gap-5 p-2 rounded-xl'>
           <div className='flex justify-between'>
             <h2>Advanced Profile Settings:</h2>
-            <SignOutButton><Button className="rounded-lg">Sign Out</Button></SignOutButton>
+            <SignOutButton><Button size={30} className="bg-primary self-end text-white text-lg px-4 py-2 rounded-3xl shadow-none">Sign Out</Button></SignOutButton>
           </div>
           <UserProfile />
         </div>

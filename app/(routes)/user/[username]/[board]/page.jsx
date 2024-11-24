@@ -21,7 +21,7 @@ const page = () => {
   const username = search.username
   const board = search.board
   const [pins, setPins]=React.useState(0)
-  const [reorderedPins, setReorderedPins]=React.useState(data?.pins || [])
+  const [reorderedPins, setReorderedPins]=React.useState([])
 
   const fetchData = async ()=>{
     if (user) {
@@ -37,6 +37,7 @@ const page = () => {
 
           if (res.success) {
             setData(res.data)
+            setReorderedPins(res.data.pins)
 
             let numOfPins = res.data.pins.length
 
@@ -51,7 +52,6 @@ const page = () => {
 
           }
 
-
       } catch (error) {
 
       }
@@ -65,18 +65,19 @@ const page = () => {
   }, [user, isLoaded])
 
   
-  const handleReorder = async () => {
+  const handleReorder = async (pins) => {
     setData((prevData) => ({
       ...prevData,
-      pins: reorderedPins,
+      pins: pins,
   }))
 
   let array = []
+  // console.log(reorderedPins)
 
-  reorderedPins.forEach(pin=>{
+  pins.forEach(pin=>{
     array.push(pin._id)
   })
-    // console.log(array)
+    console.log(array)
 
     try {
       const response = await fetch('/api/board/reorder',{
@@ -85,6 +86,7 @@ const page = () => {
       }) 
       if(response.ok){
         fetchData()
+        setReorderedPins(pins)
       }else{
         res = response.json()
         toast({
@@ -151,11 +153,11 @@ const page = () => {
           ))}
 
         </div>
-        {data.pins && <div
+        {reorderedPins && <div
           style={{ columnWidth: size ? `${size}px` : '250px' }}
           className={`${size ? "gap-2 p-2" : "gap-4 p-4"}`}>
           
-          {data.pins.map((pin) => (
+          {reorderedPins.map((pin) => (
             <div className="p-5">
               <Pin size={size} key={pin.id} className="rounded-2xl" pin={pin} id={pin.id} />
               {/* <h2>Info</h2> */}

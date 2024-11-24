@@ -13,22 +13,89 @@ import { useRouter } from 'next/navigation'
 import { useUser } from '@clerk/nextjs'
 import Image from 'next/image'
 import { ScrollArea } from '@/components/ui/scroll-area'
+import { toast } from '@/hooks/use-toast'
 
-const Create = ({ state, username }) => {
+const Create = ({ _id, refresh, state, username, pretitle, prelink, predesc, prekeywords, preimage }) => {
     const router = useRouter()
     const { user } = useUser()
-    const [title, setTitle] = React.useState('')
-    const [description, setDescription] = React.useState('')
-    const [link, setLink] = React.useState('')
-    const [keywords, setKeywords] = React.useState([])
-    const [files, setFiles] = React.useState(null)
+    const [title, setTitle] = React.useState(pretitle || '')
+    const [description, setDescription] = React.useState(predesc || '')
+    const [link, setLink] = React.useState(prelink || '')
+    const [keywords, setKeywords] = React.useState(prekeywords || [])
+    const [files, setFiles] = React.useState(preimage || null)
     // const [blobUrl, setBlobUrl] = React.useState(null)
     const [active, setActive] = React.useState(false)
 
     // Save pin to db
+    const editPin = async () => {
+
+        if (user && title && _id) {
+            
+            const pinData = {
+
+                _id,
+                title,
+                description,
+                keywords,
+                link,
+            }
+            try {
+                const response = await fetch('/api/pin', {
+                    method: "PUT",
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(pinData),
+                })
+
+                // console.log(response)
+                if (response.ok) {
+                    await refresh()
+                    setActive(false)
+                    toast({
+                        title: "Pin updated successfully",
+                        description: "success!"
+                    })
+                }
+            } catch (error) {
+                console.error('Error:', error)
+            }
+        }else{
+            toast({
+                title: "Error",
+                description: "missing required fields"
+            })
+        }
+    }
+
+    const deletePin = async ()=>{
+        if(_id){
+            try {
+                const response = await fetch('/api/pin', {
+                    method: "DELETE",
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({_id}),
+                })
+                if (response.ok) {
+                    await refresh()
+                    setActive(false)
+                    toast({
+                        title: "Pin deleted successfully",
+                        description: "success!"
+                    })
+                }
+
+            } catch (error) {
+                console.error('Error:', error)
+            }
+        }
+    }
+
     const addPin = async () => {
 
-        if(user){
+        if (user) {
             const response = await fetch(`/api/upload?filename=${files.name}`, {
                 method: 'POST',
                 body: files,
@@ -44,7 +111,7 @@ const Create = ({ state, username }) => {
                 keywords,
                 link,
             }
-    
+
             try {
                 const response = await fetch('/api/pin', {
                     method: "POST",
@@ -60,20 +127,16 @@ const Create = ({ state, username }) => {
                     router.push(`/user/${username}/created`)
                     setActive(false)
                     toast({
-                        title: "Pin created successfully", 
+                        title: "Pin created successfully",
                         description: `${title} can now be viewed by others on your profile`
-                      })
+                    })
                 }
             } catch (error) {
-            console.error('Error:', error)
-        }
-        }else{
+                console.error('Error:', error)
+            }
+        } else {
             console.log('no user')
         }
-        
-
-        
-
 
     }
 
@@ -82,15 +145,24 @@ const Create = ({ state, username }) => {
             <Dialog onOpenChange={(isOpen) => !isOpen && setActive(false)}>
                 <DialogTrigger onClick={() => setActive(true)}>
                     {state ? (
-                        <Button variant="muted" className="shadow-lg border bg-white rounded-full h-[60px] w-[60px] font-bold">
+                        <Button
+                            variant="muted"
+                            className="shadow-lg border bg-white rounded-full h-[60px] w-[60px] font-bold"
+                        >
                             <PlusIcon size={60} />
                         </Button>
+                    ) : preimage ? (
+                        <Image className="rounded-2xl relative" src={preimage} width={290} height={400} />
                     ) : (
-                        <h2 className={`${active ? "border-b-2 rounded-none border-foreground" : ""} text-foreground text-lg p-3 font-bold hover:bg-muted rounded-full flex gap-1 items-center`}>
+                        <h2
+                            className={`${active ? "border-b-2 rounded-none border-foreground" : ""
+                                } text-foreground text-lg p-3 font-bold hover:bg-muted rounded-full flex gap-1 items-center`}
+                        >
                             Create
                         </h2>
                     )}
                 </DialogTrigger>
+
                 <DialogContent className="bg-background">
                     <ScrollArea className="h-[500px]">
                         <DialogHeader>
@@ -101,7 +173,7 @@ const Create = ({ state, username }) => {
                         </DialogHeader>
                         <Separator className="my-[24px]" />
                         <div className="flex flex-col gap-6">
-                            <div>
+                            {preimage ? <Image className="rounded-2xl relative" src={preimage} width={290} height={400} /> : <div>
                                 <input
                                     type="file"
                                     id="fileInput"
@@ -125,7 +197,7 @@ const Create = ({ state, username }) => {
                                         </div>
                                     )}
                                 </label>
-                            </div>
+                            </div>}
                             <Separator />
                             <div className="flex flex-col gap-2 ">
                                 <Label htmlFor="title" className="text-left text-muted-foreground">
@@ -133,6 +205,7 @@ const Create = ({ state, username }) => {
                                 </Label>
                                 <Input
                                     onChange={(e) => setTitle(e.target.value)}
+                                    required
                                     disabled={!files}
                                     id="title"
                                     value={title}
@@ -199,16 +272,36 @@ const Create = ({ state, username }) => {
                             </div>
 
                         </div>
-                        <DialogFooter>
+                        <DialogFooter className='mt-5'>
                             <DialogClose>
-                                <Button
+                            {_id &&<Button
+                                    size={30}
+                                    disabled={!title || !files}
+                                    variant="muted"
+                                    onClick={() => deletePin()}
+                                    type="submit"
+                                    className="bg-none border-2 border-muted text-foreground mr-2 text-lg px-4 py-2 rounded-3xl shadow-none"
+                                >
+                                    Delete pin
+                                </Button>}
+                                {preimage?<Button
+                                    size={30}
+                                    disabled={!title || !files}
+                                    onClick={() => editPin()}
+                                    type="submit"
+                                    className="bg-primary self-end text-white text-lg px-4 py-2 rounded-3xl shadow-none"
+                                >
+                                    Edit pin
+                                </Button> :<Button
+                                    size={30}
                                     disabled={!title || !files}
                                     onClick={() => addPin()}
                                     type="submit"
-                                    className="rounded-2xl mt-5"
+                                    className="bg-primary self-end text-white text-lg px-4 py-2 rounded-3xl shadow-none"
                                 >
                                     Add pin
-                                </Button>
+                                </Button>}
+                                
                             </DialogClose>
                         </DialogFooter>
                     </ScrollArea>

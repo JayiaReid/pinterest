@@ -101,7 +101,7 @@ useEffect(() => {
         <Skeleton className='h-[200px] w-[250px] bg-muted rounded-xl p-5'/>
         </div>}
 
-      {/* <Nopins state={true}/> */}
+      {boards.length == 0 && <Nopins state={true}/>}
     </div>
   )
 }

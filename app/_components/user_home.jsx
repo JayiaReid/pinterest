@@ -22,7 +22,7 @@ const Home_user = () => {
 
   const fetchPins = async () => {
     try {
-      const response = await fetch('/api/pin', {
+      const response = await fetch(`/api/rec?id=${userData?._id}`, {
         method: "GET",
         headers: {
           'Content-Type': 'application/json'
@@ -31,7 +31,8 @@ const Home_user = () => {
 
       if (response.ok) {
         const res = await response.json()
-        setPins(res.data)
+        const pins = res.data.recommendedPins.sort(() => Math.random() - 0.5)
+        setPins(pins)
         setFilled(true)
       }
 
@@ -83,11 +84,13 @@ const Home_user = () => {
     }
   }
 
+  useEffect(()=>{
+    fetchPins()
+  }, [userData])
+
   useEffect(() => {
     if (isLoaded) {
       checkUser();
-      fetchPins();
-
     }
   }, [user, isLoaded])
 
