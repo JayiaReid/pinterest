@@ -127,7 +127,7 @@ const Page = () => {
       setSame(false)
       toast({
         title: "Profile updated successfully",
-        description: result.message
+        description: response.message
       })
       fetchUserProfile()
     } else if (response.status == 401) {
@@ -135,7 +135,7 @@ const Page = () => {
     } else {
       toast({
         title: "Error updating profile",
-        description: result.message
+        description: response.message
       })
     }
 
@@ -288,7 +288,10 @@ const Page = () => {
             <h2>Advanced Profile Settings:</h2>
             <SignOutButton><Button size={30} className="bg-primary self-end text-white text-lg px-4 py-2 rounded-3xl shadow-none">Sign Out</Button></SignOutButton>
           </div>
-          <UserProfile />
+          <div className='hidden lg:block md:hidden sm:hidden xs:hidden'>
+            <UserProfile />
+            </div>
+          
         </div>
 
       </div>
