@@ -2,6 +2,8 @@ import PinterestDB from "@/lib/database";
 import user_board from "@/models/user_board";
 import Pin from "@/models/Pin";
 import user_profile from "@/models/user_profile";
+import Comment from "@/models/Comment";
+import Like from "@/models/Like";
 
 export async function GET(req) {
     const { searchParams } = new URL(req.url);
