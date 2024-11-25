@@ -11,6 +11,7 @@ import Link from 'next/link'
 import { useUser } from '@clerk/nextjs'
 import { useRouter } from 'next/navigation'
 import { Skeleton } from '@/components/ui/skeleton'
+import { toast } from '@/hooks/use-toast'
 
 
 const Home_user = () => {
@@ -49,7 +50,7 @@ const Home_user = () => {
       try {
 
         const userData = {
-          firstName: user.firstName,
+          firstName: user.firstName || 'no first name',
           lastName: user.lastName || 'no last name',
           email: email,
           about: "",
@@ -77,6 +78,11 @@ const Home_user = () => {
           // console.log('found', res.data)
           setFilled(true)
 
+        }else{
+          toast({
+            title: 'Error creating user profile',
+            description: 'click on profile icon and navigate to edit profile. sign out and try signing back in.'
+          })
         }
       } catch (error) {
         console.error('Error checking or creating user:', error)
