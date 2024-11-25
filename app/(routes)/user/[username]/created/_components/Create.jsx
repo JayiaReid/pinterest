@@ -121,9 +121,9 @@ const Create = ({ _id, refresh, state, username, pretitle, prelink, predesc, pre
                     body: JSON.stringify(pinData),
                 })
 
-                console.log(response)
+                // console.log(response)
                 if (response.ok) {
-                    console.log('success')
+                    // console.log('success')
                     router.push(`/user/${username}/created`)
                     setActive(false)
                     toast({

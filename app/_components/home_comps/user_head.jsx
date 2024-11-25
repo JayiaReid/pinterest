@@ -97,7 +97,7 @@ useEffect(() => {
         </div>
       </Link>
       <div className="flex gap-2 items-center">
-        <Link href={'/'}><h2 className='cursor-pointer text-foreground text-lg p-3 font-bold  hover:bg-muted rounded-full flex gap-1 items-center'>Home</h2></Link>
+        <Link href={'/'}><h2 className='xs:hidden cursor-pointer text-foreground text-lg p-3 font-bold  hover:bg-muted rounded-full flex gap-1 items-center'>Home</h2></Link>
         <Create username={username}/>
       </div>
       {/* <h2 className={`${state == "Home" ? "bg-muted" : "bg-transparent"} rounded-lg font-bold`} checked={state == "Home"} onClick={() => router.push(item.link)}>Home</h2> */}

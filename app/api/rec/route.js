@@ -11,7 +11,7 @@ export async function GET(req) {
 
     await PinterestDB();
 
-    const recommendedPins = null
+    let recommendedPins = null
     try {
         const userBoards = await user_board
             .find({ user: userId })

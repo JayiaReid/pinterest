@@ -67,7 +67,7 @@ const page = () => {
       fetchPins()
       fetchUserProfile()
     }
-  }, [isLoaded])
+  }, [isLoaded, user])
 
 
     

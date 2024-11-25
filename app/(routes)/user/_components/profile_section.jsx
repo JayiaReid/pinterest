@@ -119,7 +119,7 @@ const Profile_section = ({ setState, state, data, user, filled, refreshData }) =
                         </DialogTrigger>
                         <DialogContent>
                             <DialogTitle><h2>Followers</h2></DialogTitle>
-                            {data?.followers.map((follower, key) => (
+                            {data?.followers?.map((follower, key) => (
                                 <User followUser={() => followUser(checkSpecificFollowing(follower), user ? user.thisUser.username : data?.username, follower._id)} user={follower} thisUser={user ? user.thisUser : data} />
                             ))}
                         </DialogContent>
@@ -130,7 +130,7 @@ const Profile_section = ({ setState, state, data, user, filled, refreshData }) =
                         </DialogTrigger>
                         <DialogContent>
                             <DialogTitle><h2>Following</h2></DialogTitle>
-                            {data?.following.map((following, key) => (
+                            {data?.following?.map((following, key) => (
                                 <User followUser={() => followUser(true, user ? user.thisUser.username : data?.username, following._id)} user={following} thisUser={user ? user.thisUser : data} />
                             ))}
                         </DialogContent>

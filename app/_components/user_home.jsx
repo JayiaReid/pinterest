@@ -69,7 +69,7 @@ const Home_user = () => {
         })
 
         const res = await response.json()
-        if (response.status === 201 && res.ok ) {
+        if (response.status === 201 ) {
           // console.log(res)
           router.push('/settings/profile')
         } else if (response.status == 200) {
