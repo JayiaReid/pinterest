@@ -11,6 +11,7 @@ export async function GET(req) {
 
     await PinterestDB();
 
+    const recommendedPins = null
     try {
         const userBoards = await user_board
             .find({ user: userId })
@@ -19,8 +20,8 @@ export async function GET(req) {
                 select: "keywords",
             });
         
-        if(!userBoards){
-            const recommendedPins = await Pin.find()
+        if(userBoards){
+            recommendedPins = await Pin.find()
             .populate({
                 path:"user",
                 select : "-email"
@@ -55,7 +56,7 @@ export async function GET(req) {
 
         const followingIds = user.following.map(followedUser => followedUser._id);
 
-        const recommendedPins = await Pin.find({
+        recommendedPins = await Pin.find({
             $or: [
                 { keywords: { $in: boardKeywords } }, 
                 { user: { $in: followingIds } }, 
