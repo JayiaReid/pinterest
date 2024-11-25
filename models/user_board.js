@@ -4,7 +4,7 @@ const user_board = new mongoose.Schema({
     title: { type: String, required: true },
     description: { type: String, default: '' },
     private: { type: Boolean, default: false },
-    user: { type: mongoose.SchemaTypes.ObjectId, ref: 'Profile', required: true },
+    user: { type: mongoose.SchemaTypes.ObjectId, ref: 'user_profile', required: true },
     pins: [{ type: mongoose.SchemaTypes.ObjectId, ref: 'Pin', default: [] }],
     sections: [{ type: mongoose.SchemaTypes.ObjectId, ref: 'Section', default: [] }],
     cover: { type: String, default: '/blank.jpg' },

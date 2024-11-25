@@ -85,6 +85,7 @@ const Home_user = () => {
   }
 
   useEffect(()=>{
+    if(userData._id)
     fetchPins()
   }, [userData])
 
