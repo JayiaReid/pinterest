@@ -208,6 +208,13 @@ const Page = () => {
     }
 }
 
+const handleEnter = (e) => {
+  if (e.key === 'Enter' && comment) {
+    addComment(); 
+    setShowComments(true)
+  }
+}
+
 
   useEffect(() => {
     if (isLoaded) {
@@ -301,6 +308,7 @@ const Page = () => {
               </div>
               <div className='flex flex-1 items-center gap-2'>
                 <Input
+                onKeyDown={(e) => handleEnter(e)}
                   value={comment.content}
                   onChange={(e) => setComment({ ...comment, content: e.target.value })}
                   placeholder="Add a comment"
