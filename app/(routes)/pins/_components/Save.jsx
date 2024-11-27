@@ -99,7 +99,7 @@ const Save = ({ user, pin, getUser }) => {
                         />
                     </div>
                 )}
-                <ScrollArea className="h-[400px] overflow-y-auto">
+                <ScrollArea className="h-[360px] overflow-y-auto mb-[80px]">
                     {selectedBoard ? (
                         <div>
                             <h2 className='text-sm'>Board</h2>
@@ -157,7 +157,7 @@ const Save = ({ user, pin, getUser }) => {
                         <p className="text-center text-gray-500 mt-8">No boards found. <Create state={true} setBoards={setFilteredBoards} refresh={async ()=>await getUser()}/></p>
                     )}
                 </ScrollArea>
-                <h2 className="text-center fixed text-gray-500 mt-8 bottom-0 shadow-lg border-t-2 w-full p-2"> <Create state={true} setBoards={setFilteredBoards} refresh={async ()=>await getUser()}/></h2>
+                <h2 className="text-center h-[80px] bg-background fixed bottom-0 shadow-lg border-t-2 w-full p-2"> <Create state={true} setBoards={setFilteredBoards} refresh={async ()=>await getUser()}/></h2>
             </DialogContent>
         </Dialog>
     );

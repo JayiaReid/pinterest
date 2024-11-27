@@ -196,7 +196,7 @@ const Page = () => {
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({op: false, email, _id}),
+                body: JSON.stringify({op: false, username, _id}),
             })
             console.log(response)
 
@@ -286,16 +286,17 @@ const handleEnter = (e) => {
                     <ChevronDown className='cursor-pointer' strokeWidth={3} size={20} onClick={() => setShowComments(true)} />
                   )}
                 </div>
-                <div className='flex-grow: 1 max-h-full'>
+                <div className='flex-grow: 1 max-h-full '>
                    { showComments && (
                  pin.comments?.length > 0? (
-                    <ScrollArea className='max-w-[300px] h-20'>
+                    <div className='max-w-[300px] overflow-y-scroll'>
                       {pin.comments.map((comment) => (
                         <h2 className='my-4 w-full break-words' key={comment._id}>
-                          <span className='font-semibold'>{comment.user.firstName} {comment.user.lastName}</span><span className='truncate-2-lines'>{comment.content}</span>
+                          <span className='font-semibold'>{comment.user.firstName} {comment.user.lastName}</span>
+                          <span className='truncate-2-lines'>{comment.content}</span>
                         </h2>
                       ))}
-                    </ScrollArea>
+                    </div>
                   ) : (
                     <h2 className='text-muted-foreground '>No comments yet! Add one to start the conversation.</h2>
                   )

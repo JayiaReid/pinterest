@@ -99,7 +99,7 @@ const Create = ({state, refresh, setBoards}) => {
         <div>
             <Dialog open={active} onOpenChange={(isOpen) => !isOpen && setActive(false) }>
                 <DialogTrigger onClick={() => setActive(true)}>
-                    {state? <Button variant='muted' size={30} className="text-lg text-foreground px-4 py-2 rounded-3xl shadow-none"> <span className='p-2 bg-muted rounded-xl'><Plus size={30} strokeWidth={2.75} className='text-foreground'/></span><span className='ml-2'>Create Board</span></Button> :<Button variant="muted" className=" rounded-full h-[60px] w-[60px] font-bold"><PlusIcon size={30} strokeWidth={2.5} /></Button>}
+                    {state? <div variant='muted' size={30} className="flex items-center text-lg text-foreground  bg-bacground px-4 py-2 rounded-3xl shadow-none"> <span className='p-2 bg-muted rounded-xl'><Plus size={30} strokeWidth={2.75} className='text-foreground'/></span><span className='ml-2'>Create Board</span></div> :<Button variant="muted" className=" rounded-full h-[60px] w-[60px] font-bold"><PlusIcon size={30} strokeWidth={2.5} /></Button>}
                 </DialogTrigger>
                 <DialogContent className="bg-background">
                     <DialogHeader>
