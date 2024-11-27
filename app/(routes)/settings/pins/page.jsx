@@ -12,6 +12,7 @@ const page = () => {
   const { isLoaded, user } = useUser()
 
   const fetchPins = async () => {
+    setFilled(false)
     if (user) {
       const email = user.emailAddresses[0].emailAddress
 
@@ -52,9 +53,7 @@ const page = () => {
       <div className='gap-5 w-full columns-[300px] p-5'>
         {filled && pins && pins.map(pin => (
           <div className='m-5'>
-
-            {/* now why didnt I just pass the pin??? */}
-            <Create refresh={()=>fetchPins()} _id={pin?._id} username={pin?.user.username} pretitle={pin?.title} prelink={pin?.link} predesc={pin?.description} prekeywords={pin?.keywords} preimage={pin?.image} />
+            <Create refresh={()=> fetchPins()} _id={pin?._id} username={pin?.user.username} pretitle={pin?.title} prelink={pin?.link} predesc={pin?.description} prekeywords={pin?.keywords} preimage={pin?.image} />
 
           </div>
 

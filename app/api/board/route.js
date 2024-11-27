@@ -11,15 +11,15 @@ export async function POST(req, res) {
         const body = await req.json()
         console.log(body)
 
-        const existingBoard = await user_board.findOne({ 
-            user: body.user, 
-            title: body.title 
+        const existingBoard = await user_board.findOne({
+            user: body.user,
+            title: body.title
         })
 
         if (existingBoard) {
-            return new Response(JSON.stringify({ 
-                success: false, 
-                message: 'A board with this title already exists for this user.' ,
+            return new Response(JSON.stringify({
+                success: false,
+                message: 'A board with this title already exists for this user.',
                 // data: existingBoard
             }), {
                 status: 400,
@@ -62,23 +62,23 @@ export async function GET(req) {
     await PinterestDB()
 
     try {
-        const user = await user_profile.findOne({username})
+        const user = await user_profile.findOne({ username })
 
-        const board = await user_board.findOne({ 
-            user: user._id, 
-            title: title 
+        const board = await user_board.findOne({
+            user: user._id,
+            title: title
         }).populate('pins')
-        .populate({
-            path: 'sections',
-            populate: {
-            path: 'pins'
-            }
-        })
+            .populate({
+                path: 'sections',
+                populate: {
+                    path: 'pins'
+                }
+            })
 
         if (!board) {
-            return new Response(JSON.stringify({ 
-                success: false, 
-                message: 'No board found with this title for the user.' 
+            return new Response(JSON.stringify({
+                success: false,
+                message: 'No board found with this title for the user.'
             }), {
                 status: 404,
                 headers: { 'Content-Type': 'application/json' },
@@ -97,71 +97,90 @@ export async function GET(req) {
     }
 }
 
-export async function PUT(req){
+export async function PUT(req) {
     await PinterestDB()
 
-  try {
-    const body = await req.json()
-    const { title, cover, description, secret, _id, images } = body
-    // console.log(body)
+    try {
+        const body = await req.json()
+        const { title, cover, description, secret, _id, images } = body
+        // console.log(body)
 
-    if (!title || !cover) {
-      return new Response(JSON.stringify({ success: false, message: 'Missing required fields' }), {
-        status: 400,
-        headers: { 'Content-Type': 'application/json' },
-      })
+        if (!title || !cover) {
+            return new Response(JSON.stringify({ success: false, message: 'Missing required fields' }), {
+                status: 400,
+                headers: { 'Content-Type': 'application/json' },
+            })
+        }
+
+        const result = await user_board.updateOne(
+            { _id },
+            {
+                $set: {
+                    title,
+                    cover,
+                    description,
+                    private: secret,
+                    images
+                },
+            }
+        )
+
+        if (result.modifiedCount === 0) {
+            return new Response(JSON.stringify({ success: false, message: 'User not found or no changes made' }), {
+                status: 404,
+                headers: { 'Content-Type': 'application/json' },
+            })
+        }
+
+        return new Response(JSON.stringify({ success: true, message: 'Board updated successfully' }), {
+            status: 200,
+            headers: { 'Content-Type': 'application/json' },
+        })
+    } catch (error) {
+        return new Response(JSON.stringify({ success: false, error: error.message }), {
+            status: 500,
+            headers: { 'Content-Type': 'application/json' },
+        })
     }
-
-    const result = await user_board.updateOne(
-      { _id },
-      {
-        $set: {
-          title,
-          cover,
-          description,
-          private: secret,
-          images
-        },
-      }
-    )
-
-    if (result.modifiedCount === 0) {
-      return new Response(JSON.stringify({ success: false, message: 'User not found or no changes made' }), {
-        status: 404,
-        headers: { 'Content-Type': 'application/json' },
-      })
-    }
-
-    return new Response(JSON.stringify({ success: true, message: 'Board updated successfully' }), {
-      status: 200,
-      headers: { 'Content-Type': 'application/json' },
-    })
-  } catch (error) {
-    return new Response(JSON.stringify({ success: false, error: error.message }), {
-      status: 500,
-      headers: { 'Content-Type': 'application/json' },
-    })
-  }
 
 }
 
-export async function DELETE(req){
-    
+export async function DELETE(req) {
+
     await PinterestDB()
 
     try {
         const body = await req.json()
 
-        const {_id, user} = body
+        const { _id, user } = body
+        console.log(body)
 
-        await user_board.findOneAndDelete({_id})
-
-        const userProfile = await user_profile.findOne({_id: user})
-s
+        const userProfile = await user_profile.findOne({ _id: user })
+        if (!userProfile) {
+            return new Response(JSON.stringify({
+                success: false,
+                message: 'User profile not found.'
+            }), {
+                status: 404,
+                headers: { 'Content-Type': 'application/json' },
+            })
+        }
+        
+        console.log(userProfile)
         userProfile.boards = userProfile.boards.filter(board => board.toString() !== _id)
 
         await userProfile.save()
 
+        const deletedBoard = await user_board.findOneAndDelete({ _id })
+        if (!deletedBoard) {
+            return new Response(JSON.stringify({
+                success: false,
+                message: 'Board not found.'
+            }), {
+                status: 404,
+                headers: { 'Content-Type': 'application/json' },
+            })
+        }
         return new Response(JSON.stringify({
             success: true,
             message: 'Board deleted successfully.'
@@ -180,3 +199,4 @@ s
         })
     }
 }
+

@@ -78,14 +78,17 @@ const Create = ({ _id, refresh, state, username, pretitle, prelink, predesc, pre
                     },
                     body: JSON.stringify({_id}),
                 })
-                if (response.ok) {
-                    await refresh()
+                // 
+                    refresh()
                     setActive(false)
+                    if (response.ok) {
                     toast({
                         title: "Pin deleted successfully",
                         description: "success!"
                     })
                 }
+                    router.push(router.refresh)
+                // 
 
             } catch (error) {
                 console.error('Error:', error)
@@ -124,11 +127,11 @@ const Create = ({ _id, refresh, state, username, pretitle, prelink, predesc, pre
                 // console.log(response)
                 if (response.ok) {
                     // console.log('success')
-                    router.push(`/user/${username}/created`)
+                    // router.push(`/user/${username}/created`)
                     setActive(false)
                     toast({
                         title: "Pin created successfully",
-                        description: `${title} can now be viewed by others on your profile`
+                        description: `${title} can now be viewed by others on your profile. go to created section of profile to view pin or 'Edit Profile' to edit pin.`
                     })
                 }
             } catch (error) {
@@ -152,7 +155,7 @@ const Create = ({ _id, refresh, state, username, pretitle, prelink, predesc, pre
                             <PlusIcon size={60} />
                         </Button>
                     ) : preimage ? (
-                        <Image className="rounded-2xl relative" src={preimage} width={290} height={400} />
+                        <Image className="rounded-2xl relative cursor-pointer" src={preimage} width={290} height={400} />
                     ) : (
                         <h2
                             className={`${active ? "border-b-2 rounded-none border-foreground" : ""

@@ -4,12 +4,13 @@ import { DialogContent } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Dialog, DialogTrigger } from '@radix-ui/react-dialog';
-import { ChevronRight, LockIcon, ArrowLeft } from 'lucide-react';
+import { ChevronRight, LockIcon, ArrowLeft, Plus } from 'lucide-react';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
+import Create from '../../user/[username]/[board]/_components/CreateBoard';
 
-const Save = ({ user, pin }) => {
+const Save = ({ user, pin, getUser }) => {
     const [search, setSearch] = useState('');
     const [filteredBoards, setFilteredBoards] = useState(user?.boards || []);
     const [selectedBoard, setSelectedBoard] = useState(null);
@@ -153,9 +154,10 @@ const Save = ({ user, pin }) => {
                             </div>
                         ))
                     ) : (
-                        <p className="text-center text-gray-500 mt-8">No boards found.</p>
+                        <p className="text-center text-gray-500 mt-8">No boards found. <Create state={true} setBoards={setFilteredBoards} refresh={async ()=>await getUser()}/></p>
                     )}
                 </ScrollArea>
+                <h2 className="text-center fixed text-gray-500 mt-8 bottom-0 shadow-lg border-t-2 w-full p-2"> <Create state={true} setBoards={setFilteredBoards} refresh={async ()=>await getUser()}/></h2>
             </DialogContent>
         </Dialog>
     );

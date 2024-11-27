@@ -91,7 +91,7 @@ useEffect(() => {
         
         <Create />
       </div>
-      {filled? <div className=' grid grid-cols-2 xl:grid-cols-5 lg:grid-cols-4 md:grid-cols-3 sm:grid-cols-2'>
+      {filled? <div className=' grid grid-cols-2 xs:grid-cols-1 xl:grid-cols-5 lg:grid-cols-4 md:grid-cols-3 sm:grid-cols-2'>
         {getSortedBoards().map((board, index) => (
           <Board key={index} board={board} user={username} />
         ))}

@@ -35,8 +35,9 @@ const Edit = ({ board, type, username, title2 }) => {
             }),
         })
 
+        console.log(response)
         const result = await response.json()
-        if (result.success) {
+        if (response.ok) {
             // toast
             toast({
                 title: "Board deleted successfully",

@@ -13,6 +13,7 @@ import Pin from '../_components/Pin'
 import Pin_map from '@/app/_components/global_comps/pin_map'
 import Save from '../_components/Save'
 import useDownloader from 'react-use-downloader'
+import { ScrollArea } from '@/components/ui/scroll-area'
 
 const Page = () => {
 
@@ -175,7 +176,7 @@ const Page = () => {
   const followUser = async (_id) => {
 
     try {
-        const email = user.emailAddresses[0].emailAddress
+        const username = userData?.username
         
         if (!following) {
             const response = await fetch('/api/users', {
@@ -183,9 +184,9 @@ const Page = () => {
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({op: true, email, _id}),
+                body: JSON.stringify({op: true, username, _id}),
             })
-            console.log(response)
+            // console.log(response)
 
             setFollowing(true)
             fetchPins()
@@ -226,10 +227,13 @@ const Page = () => {
       </div>
       <div className='flex mx-5 my-10 items-center w-full h-full justify-center'>
         <Card className="rounded-3xl shadow-lg border-none">
-          <CardContent className="m-0 p-0 flex flex-col md:flex-row lg-flex-row xl:flex-row">
-            <Image className="rounded-2xl object-cover" src={pin?.image} width={500} height={400} alt="Pin" />
-            <div className='p-8 flex flex-col gap-8'>
-              <div className='flex items-center justify-between'>
+          <CardContent className="m-0 p-0 flex justify-between flex-col md:flex-row lg-flex-row xl:flex-row">
+            <div>
+              <Image className="rounded-2xl object-cover" objectFit='cover' src={pin?.image} height={500} width={500} alt="Pin" />
+            </div>
+            
+            <div className='p-8 flex flex-col gap-8 max-w-[500px]'>
+              <div className='flex flex-1 items-center justify-between h-[45px]'>
                 <div className='flex gap-5'>
                   <div className='flex gap-2'>
                     <HeartIcon className='cursor-pointer' onClick={() => likePin()} strokeWidth={`${pin.liked ? 0 : 3}`} size={20} fill={`${liked ? 'red' : 'transparent'}`} />
@@ -238,13 +242,16 @@ const Page = () => {
                   <Share className='cursor-pointer' strokeWidth={3} size={20} />
                   <Download className='cursor-pointer' onClick={() => download(pin?.image, `${pin?.title}.jpg`)} strokeWidth={3} size={20} />
                 </div>
-                <Save user={userData} pin={id} />
+                <Save user={userData} pin={id} getUser={getUser} />
               </div>
-              <h2 className='text-2xl font-semibold'>{pin?.title}</h2>
+              <div className='flex flex-1 flex-col gap-2'>
+                 <h2 className='text-2xl font-semibold'>{pin?.title}</h2>
               <h2>{pin?.description}</h2>
+              </div>
+             
               {pin.link && <Link href={pin?.link} className='font-bold'>{pin?.link}</Link>}
 
-              <div className='flex items-center gap-5 justify-between'>
+              <div className='flex items-center flex-1 gap-5 justify-between'>
                 <Link href={`/${pin.user?.username}/`} className="flex items-center gap-2">
                   <Avatar className="w-[40px] max-w-[70px] h-[40px]">
                     <AvatarImage
@@ -263,9 +270,8 @@ const Page = () => {
                 </Link>
                 {pin && pin.user?.username !== userData.username && <Button onClick={()=>followUser(pin.user?._id)} variant="outline" size={30} className=" text-foreground self-end text-lg px-4 py-2 rounded-3xl shadow-none">{following? 'Following': 'Follow'} {following}</Button>}
               </div>
-
-              <div className='flex flex-col gap-5'>
-                <div className='flex justify-between items-center'>
+              <div className='flex flex-col h-full gap-5'>
+                <div className='flex justify-between items-center '>
                   <h2 className='font-semibold'>{pin.comments?.length} Comments</h2>
                   {showComments ? (
                     <ChevronUp className='cursor-pointer' strokeWidth={3} size={20} onClick={() => setShowComments(false)} />
@@ -273,23 +279,27 @@ const Page = () => {
                     <ChevronDown className='cursor-pointer' strokeWidth={3} size={20} onClick={() => setShowComments(true)} />
                   )}
                 </div>
-
-                {pin.comments?.length > 0 ? (
-                  showComments && (
-                    <div>
+                <div className='flex-grow: 1 max-h-full'>
+                   { showComments && (
+                 pin.comments?.length > 0? (
+                    <ScrollArea className='max-w-[300px] h-20'>
                       {pin.comments.map((comment) => (
-                        <h2 className='my-4' key={comment._id}>
-                          <span className='font-semibold'>{comment.user.firstName} {comment.user.lastName}</span> {comment.content}
+                        <h2 className='my-4 w-full break-words' key={comment._id}>
+                          <span className='font-semibold'>{comment.user.firstName} {comment.user.lastName}</span><span className='truncate-2-lines'>{comment.content}</span>
                         </h2>
                       ))}
-                    </div>
+                    </ScrollArea>
+                  ) : (
+                    <h2 className='text-muted-foreground '>No comments yet! Add one to start the conversation.</h2>
                   )
-                ) : (
-                  <h2 className='text-muted-foreground'>No comments yet</h2>
-                )}
-              </div>
+                  // </div>
+                ) }
+                </div>
+               
 
-              <div className='flex items-center gap-2'>
+            
+              </div>
+              <div className='flex flex-1 items-center gap-2'>
                 <Input
                   value={comment.content}
                   onChange={(e) => setComment({ ...comment, content: e.target.value })}
@@ -298,6 +308,7 @@ const Page = () => {
                 />
                 <Button variant="ouline" className="rounded-full p-1 border h-[30px]"><Check onClick={() => { addComment(); setShowComments(true) }} className='cursor-pointer' strokeWidth={2} size={20} /></Button>
               </div>
+              
             </div>
           </CardContent>
         </Card>

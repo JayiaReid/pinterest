@@ -55,7 +55,7 @@ const page = () => {
 
         </div>
         <div
-          className=" grid grid-cols-2 xl:grid-cols-5 lg:grid-cols-4 md:grid-cols-3 sm:grid-cols-2">
+          className=" grid grid-cols-2 xs:grid-cols-1 xl:grid-cols-5 lg:grid-cols-4 md:grid-cols-3 sm:grid-cols-2">
           {board.sections?.map((section, index) => (
             <div className="p-5">
               <Section section={section} username={username} board={board} key={index} other={true} className="rounded-2xl" />

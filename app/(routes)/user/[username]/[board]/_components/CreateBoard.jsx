@@ -1,7 +1,7 @@
 "use client"
 import React, { useEffect } from 'react'
 import { Button } from '@/components/ui/button'
-import { CheckCheck, ImageUp, LucideUpload, PlusIcon, Upload } from 'lucide-react'
+import { CheckCheck, ImageUp, LucideUpload, Plus, PlusIcon, Upload } from 'lucide-react'
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog'
 import { Label } from '@/components/ui/label'
 import { Input } from '@/components/ui/input'
@@ -14,7 +14,7 @@ import Image from 'next/image'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { Checkbox } from '@/components/ui/checkbox'
 
-const Create = () => {
+const Create = ({state, refresh, setBoards}) => {
     const router = useRouter()
     const { user, isLoaded } = useUser()
     const [title, setTitle] = React.useState('')
@@ -73,11 +73,16 @@ const Create = () => {
                 },
                 body: JSON.stringify(Info),
             })
-
-            // console.log(response)
             
             if (response.ok) {
-                router.push(`/user/${username}/${title}`)
+                if(!state) {
+                    router.push(`/user/${username}/${title}`)
+                } else{
+                    const user = await refresh()
+                    console.log(user)
+                    setBoards(user.boards)
+                }
+                
                 setActive(false)
                 setSame(false)
                 setTitle('')
@@ -89,14 +94,12 @@ const Create = () => {
         }
 
     }
-
-    // check if user already has board by that name 
-
+    
     return (
         <div>
             <Dialog open={active} onOpenChange={(isOpen) => !isOpen && setActive(false) }>
                 <DialogTrigger onClick={() => setActive(true)}>
-                    <Button variant="muted" className=" rounded-full h-[60px] w-[60px] font-bold"><PlusIcon size={30} strokeWidth={2.5} /></Button>
+                    {state? <Button variant='muted' size={30} className="text-lg text-foreground px-4 py-2 rounded-3xl shadow-none"> <span className='p-2 bg-muted rounded-xl'><Plus size={30} strokeWidth={2.75} className='text-foreground'/></span><span className='ml-2'>Create Board</span></Button> :<Button variant="muted" className=" rounded-full h-[60px] w-[60px] font-bold"><PlusIcon size={30} strokeWidth={2.5} /></Button>}
                 </DialogTrigger>
                 <DialogContent className="bg-background">
                     <DialogHeader>
