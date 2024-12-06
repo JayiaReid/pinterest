@@ -2,15 +2,20 @@
 import Image from 'next/image'
 import React, { useEffect } from 'react'
 import Link from 'next/link'
-import { DropdownMenu, DropdownMenuCheckboxItem, DropdownMenuContent, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
+import { DropdownMenu, DropdownMenuItem, DropdownMenuContent, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
 import { ChevronDown, Search } from 'lucide-react'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { useUser } from '@clerk/nextjs'
 import Create from '@/app/(routes)/user/[username]/created/_components/Create'
+import { Moon, MoonIcon, Sun } from "lucide-react"
+import { useTheme } from "next-themes"
+ 
+import { Button } from "@/components/ui/button"
 
 
 const Head = () => {
+  const { setTheme } = useTheme()
   const [search, setSearch] = React.useState('')
   const pathname = usePathname()
   const searchParams = useSearchParams()
@@ -113,6 +118,26 @@ useEffect(() => {
           className='w-full pl-12 pr-4 py-3 bg-muted rounded-full focus:outline-none focus:ring-2 focus:ring-[#767676]'
         />
       </div>
+      {/* <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <Button variant="outline" size="icon">
+          <Sun className="h-[1.2rem] w-[1.2rem] rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
+          <Moon className="absolute h-[1.2rem] w-[1.2rem] rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
+          <span className="sr-only">Toggle theme</span>
+        </Button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align="end">
+        <DropdownMenuItem onClick={() => setTheme("light")}>
+          Light
+        </DropdownMenuItem>
+        <DropdownMenuItem onClick={() => setTheme("dark")}>
+          Dark
+        </DropdownMenuItem>
+        <DropdownMenuItem onClick={() => setTheme("system")}>
+          System
+        </DropdownMenuItem>
+      </DropdownMenuContent>
+    </DropdownMenu> */}
       <div className="hover:bg-muted bg-transparent p-3 rounded-full duration-300 cursor-pointer">
         <Link href={username? `/user/${username}/saved`: '/settings/profile'} className=" w-[40px] max-w-[70px] h-[40px] flex items-center justify-center">
           <Avatar className="w-full h-full">

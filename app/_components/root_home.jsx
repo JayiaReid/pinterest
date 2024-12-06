@@ -11,20 +11,9 @@ const Root_Home = () => {
         className="absolute inset-0 w-full h-full object-cover z-[-1]" width={1000} height={1000} src={"/landing.png"} 
       />
 
-      {/* <div className="absolute inset-0 bg-black bg-opacity-50 z-[-1]" /> */}
 
       <div className="relative text-left text-white max-w-screen-lg ml-[70px] mt-20">
-      {/* <div className="  flex items-center mb-5 gap-2 justify-center">
-        <Image
-          src="/logo.png"
-          alt="Logo"
-          layout="intrinsic"
-          width={40}
-          height={40}
-          className="object-cover"
-        />
-        <h2 className="text-primary font-semibold text-2xl">Pinterest</h2>
-      </div> */}
+  
         <h2 className="text-[80px] md:text-[80px] lg:text-[100px] font-bold leading-snug mb-6">
           Explore.
         </h2>

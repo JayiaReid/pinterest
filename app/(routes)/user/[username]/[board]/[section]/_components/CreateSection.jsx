@@ -36,9 +36,9 @@ const Create = ({board, refreshData}) => {
                 body: JSON.stringify(Info),
             })
 
-            console.log(response)
+        
             if (response.ok) {
-                console.log('added')
+                
                 refreshData()
                 setActive(false)
                 setTitle('')

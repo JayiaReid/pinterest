@@ -79,7 +79,6 @@ const Create = ({state, refresh, setBoards}) => {
                     router.push(`/user/${username}/${title}`)
                 } else{
                     const user = await refresh()
-                    console.log(user)
                     setBoards(user.boards)
                 }
                 

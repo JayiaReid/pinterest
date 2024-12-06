@@ -25,6 +25,7 @@ export const metadata = {
 
 export default function RootLayout({ children }) {
   return (
+    // clerk :for authentication and sessions
     <ClerkProvider appearance={{
       baseTheme: shadesOfPurple,
       variables: { colorBackground: 'white', colorPrimary: "#E50022", colorNeutral: "black", colorTextOnPrimaryBackground: "white", colorText: "black", colorTextSecondary: "black", colorInputBackground: "white", colorInputText: "black", borderRadius: "0.8rem" },
@@ -32,7 +33,8 @@ export default function RootLayout({ children }) {
     <html lang="en">
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-      >
+      > 
+      {/* toggle */}
         <ThemeProvider
             attribute="class"
             defaultTheme="light"

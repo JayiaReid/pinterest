@@ -57,7 +57,6 @@ const Reorganize = ({ pins, setPins, onReorder, _id }) => {
 
     const onDelete = async () =>{
         const arr = localPins.filter(pin=>!selected.includes(pin))
-        console.log(arr)
         setPins(arr)
         setLocalPins(arr)
         onReorder(arr)
@@ -71,13 +70,8 @@ const Reorganize = ({ pins, setPins, onReorder, _id }) => {
         updatedPins.splice(toIndex, 0, movedPin)
         setLocalPins(updatedPins)
         setPins(updatedPins)
-        // console.log(updatedPins)
         onReorder(updatedPins)
     }
-
-    // const handleSave = () => {
-    //     setPins(localPins)
-    // }
 
     return (
         <Dialog open={open} onOpenChange={setOpen}>

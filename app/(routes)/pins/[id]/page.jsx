@@ -45,7 +45,7 @@ const Page = () => {
 
       if (response.ok) {
         const res = await response.json()
-        // console.log(res.data)
+        
         return res.data
       }
     } catch (error) {
@@ -56,7 +56,7 @@ const Page = () => {
   const checkFollowing = async (_id, pin) => {
 
     pin.user?.followers.forEach(follower => {
-      console.log(follower)
+      
       if (follower == _id) {
         setFollowing(true)
       }
@@ -75,7 +75,7 @@ const Page = () => {
       if (response.ok) {
         const res = await response.json()
         const pin = res.data.filter(pin => pin._id == id)
-        console.log(pin)
+        
         setPin(pin[0])
         const user = await getUser()
         setUser(user)
@@ -186,7 +186,7 @@ const Page = () => {
                 },
                 body: JSON.stringify({op: true, username, _id}),
             })
-            // console.log(response)
+            
 
             setFollowing(true)
             fetchPins()
@@ -198,7 +198,7 @@ const Page = () => {
                 },
                 body: JSON.stringify({op: false, username, _id}),
             })
-            console.log(response)
+            
 
             setFollowing(false)
             fetchPins()

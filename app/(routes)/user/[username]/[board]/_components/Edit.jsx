@@ -35,7 +35,6 @@ const Edit = ({ board, type, username, title2 }) => {
             }),
         })
 
-        console.log(response)
         const result = await response.json()
         if (response.ok) {
             // toast
@@ -159,13 +158,11 @@ const Edit = ({ board, type, username, title2 }) => {
     }
 
     const initialize = () => {
-        console.log(board)
         if (board) {
             setImage(board.cover);
             setTitle(board.title);
             setDescription(board.description);
             setSecret(board.private);
-            console.log("update")
         }
     }
 
