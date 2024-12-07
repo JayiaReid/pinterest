@@ -289,7 +289,7 @@ const handleEnter = (e) => {
                 <div className='flex-grow: 1 max-h-full '>
                    { showComments && (
                  pin.comments?.length > 0? (
-                    <div className='max-w-[300px] overflow-y-scroll'>
+                    <div className='max-w-[300px] overflow-y-hidden'>
                       {pin.comments.map((comment) => (
                         <h2 className='my-4 w-full break-words' key={comment._id}>
                           <span className='font-semibold'>{comment.user.firstName} {comment.user.lastName}</span>
